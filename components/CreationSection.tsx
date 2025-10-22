@@ -612,24 +612,39 @@ export default function CreationSection({
 
         {/* Identity dropdown and Generate button row */}
         <div className="flex items-center justify-between gap-3">
-          {/* Identity Dropdown */}
+          {/* Identity Dropdown or Upload Button */}
           <div className="relative">
-            <button
-              onClick={() => setShowIdentityDropdown(!showIdentityDropdown)}
-              className="ios-button-secondary px-4 py-2.5 text-sm flex items-center gap-2"
-            >
-              {identityImage && (
-                <div className="w-6 h-6 rounded-full overflow-hidden border border-white/50">
-                  <img
-                    src={identityImage}
-                    alt="Identity"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <span className="text-white">{getCurrentIdentityName()}</span>
-              <ChevronDown className="w-4 h-4 text-white" />
-            </button>
+            {hasIdentity ? (
+              <button
+                onClick={() => setShowIdentityDropdown(!showIdentityDropdown)}
+                className="ios-button-secondary px-4 py-2.5 text-sm flex items-center gap-2"
+              >
+                {identityImage && (
+                  <div className="w-6 h-6 rounded-full overflow-hidden border border-white/50">
+                    <img
+                      src={identityImage}
+                      alt="Identity"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <span className="text-white">{getCurrentIdentityName()}</span>
+                <ChevronDown className="w-4 h-4 text-white" />
+              </button>
+            ) : (
+              <motion.button
+                onClick={() => fileInputRef.current?.click()}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2.5 text-sm flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold"
+                style={{
+                  boxShadow: '0 4px 12px rgba(168, 85, 247, 0.3)',
+                }}
+              >
+                <Upload className="w-4 h-4" />
+                <span>Upload Photo</span>
+              </motion.button>
+            )}
 
             <AnimatePresence>
               {showIdentityDropdown && (
