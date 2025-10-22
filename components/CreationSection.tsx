@@ -636,13 +636,10 @@ export default function CreationSection({
                 onClick={() => fileInputRef.current?.click()}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-2.5 text-sm flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold"
-                style={{
-                  boxShadow: '0 4px 12px rgba(168, 85, 247, 0.3)',
-                }}
+                className="ios-button-secondary px-4 py-2.5 text-sm flex items-center gap-2"
               >
-                <Upload className="w-4 h-4" />
-                <span>Upload Photo</span>
+                <Upload className="w-4 h-4 text-white" />
+                <span className="text-white">Upload Photo</span>
               </motion.button>
             )}
 

@@ -415,10 +415,7 @@ export default function IdentitySection({
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="mt-6 px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-lg"
-              style={{
-                boxShadow: '0 8px 24px rgba(168, 85, 247, 0.4)',
-              }}
+              className="mt-6 px-8 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold shadow-lg"
             >
               <div className="flex items-center gap-2">
                 <Upload className="w-5 h-5" />
