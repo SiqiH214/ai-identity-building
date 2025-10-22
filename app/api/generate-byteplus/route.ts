@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     let rewrittenPrompt = ''
 
     try {
-      // Use OpenAI for prompt rewriting (BytePlus doesn't have text-only generation endpoint in the same way)
+      // Use OpenAI for prompt rewriting
       const openaiApiKey = process.env.OPENAI_API_KEY
 
       if (openaiApiKey) {
@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
       rewrittenPrompt = `Professional photograph of the person from this image, ${userIntent}, natural lighting, photorealistic, high quality`
     }
 
-    // Step 2: Generate images using BytePlus Seedream
-    console.log('🖼️  Generating images with BytePlus Seedream...')
+    // Step 2: Generate 4 images using BytePlus Seedream in ONE call
+    console.log('🖼️  Generating 4 images with BytePlus Seedream in a single API call...')
 
     const errors: string[] = []
 
@@ -97,35 +97,29 @@ export async function POST(request: NextRequest) {
     // Add co-create images if available
     if (hasMultipleCharacters) {
       referenceImages.push(...coCreateImages)
-      console.log(`📸 Using ${referenceImages.length} reference images for generation`)
+      console.log(`📸 Using ${referenceImages.length} reference images for multi-character generation`)
     }
 
-    // Generate 4 images in a single API call using BytePlus
-    console.log('🎨 Generating 4 image variations with BytePlus in a single call...')
+    // Single API call to generate 4 variations
+    const requestBody: any = {
+      model: byteplusModel,
+      prompt: `${rewrittenPrompt}, professional photography, high quality, photorealistic, cinematic lighting`,
+      image: referenceImages, // Array of base64 data URLs
+      n: 4, // Generate 4 variations
+      response_format: 'b64_json', // Get base64 response
+      size: '1440x2560', // Portrait size
+      watermark: false,
+    }
 
-    const errors: string[] = []
-    let images: string[] = []
+    console.log(`🔧 BytePlus API request:`, {
+      model: requestBody.model,
+      promptLength: requestBody.prompt.length,
+      referenceImageCount: requestBody.image.length,
+      numVariations: requestBody.n,
+      size: requestBody.size,
+    })
 
     try {
-      // BytePlus API call - generate 4 images at once
-      const requestBody = {
-        model: byteplusModel,
-        prompt: `${rewrittenPrompt}, professional photography, high quality, photorealistic, cinematic lighting`,
-        image: referenceImages, // Array of base64 data URLs
-        n: 4, // Generate 4 images in one call
-        response_format: 'b64_json', // Get base64 response
-        size: '1440x2560', // Portrait size
-        watermark: false,
-      }
-
-      console.log(`🔧 BytePlus request:`, {
-        model: requestBody.model,
-        promptLength: requestBody.prompt.length,
-        imageCount: requestBody.image.length,
-        numImages: requestBody.n,
-        size: requestBody.size,
-      })
-
       const imageResponse = await fetch(`${byteplusBaseUrl}/images/generations`, {
         method: 'POST',
         headers: {
@@ -135,183 +129,90 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify(requestBody),
       })
 
-      if (imageResponse.ok) {
-        const imageData = await imageResponse.json()
+      const responseText = await imageResponse.text()
 
-        console.log(`📦 BytePlus response:`, {
-          hasData: !!imageData.data,
-          dataLength: imageData.data?.length || 0,
-        })
+      if (!imageResponse.ok) {
+        console.error(`❌ BytePlus API error (${imageResponse.status}):`, responseText.substring(0, 500))
+        console.log('📋 Full error:', responseText)
 
-        // Check for image data in response
-        if (imageData.data && Array.isArray(imageData.data)) {
-          for (const item of imageData.data) {
-            if (item.b64_json) {
-              const base64Image = `data:image/jpeg;base64,${item.b64_json}`
-              images.push(base64Image)
-              console.log(`✅ Generated image ${images.length}/4`)
-            } else if (item.url) {
-              images.push(item.url)
-              console.log(`✅ Generated image ${images.length}/4 (URL format)`)
-            }
-          }
-        }
-
-        if (images.length === 0) {
-          const errorMsg = `No image data found in response: ${JSON.stringify(imageData).substring(0, 200)}`
-          console.error(`❌ BytePlus: ${errorMsg}`)
-          errors.push(errorMsg)
-        }
-      } else {
-        const errorText = await imageResponse.text()
-        const errorMsg = `API error (${imageResponse.status}): ${errorText.substring(0, 300)}`
-        console.error(`❌ BytePlus: ${errorMsg}`)
-        errors.push(errorMsg)
-      }
-    } catch (error) {
-      const errorMsg = `Exception: ${error instanceof Error ? error.message : String(error)}`
-      console.error(`❌ BytePlus: ${errorMsg}`)
-      errors.push(errorMsg)
-    }
-
-    // If the single-call approach failed, fall back to parallel generation with style variations
-    if (images.length === 0) {
-      console.log('⚠️  Single-call generation failed, trying parallel generation with style variations...')
-
-      // Define 4 distinct style variations
-      const styleVariations = [
-        {
-          name: 'Instagram Realistic',
-          prompt: `${rewrittenPrompt}, shot on iPhone, Instagram aesthetic, natural lighting, candid moment, modern photography style, shallow depth of field, cinematic color grading, 8k quality, photorealistic`
-        },
-        {
-          name: 'Surreal Pinterest',
-          prompt: `${rewrittenPrompt}, surreal artistic edit, Pinterest aesthetic, dreamy atmosphere, soft pastel colors, ethereal lighting, artistic composition, creative digital art style, fantasy mood, painterly quality`
-        },
-        {
-          name: 'Anime Style',
-          prompt: `${rewrittenPrompt}, anime art style, Japanese animation aesthetic, vibrant colors, clean lines, Studio Ghibli inspired, beautiful anime character design, detailed anime illustration, high quality anime art`
-        },
-        {
-          name: 'Unreal Engine',
-          prompt: `${rewrittenPrompt}, Unreal Engine 5 render, hyperrealistic CGI, ray tracing, volumetric lighting, physically based rendering, ultra detailed 3D render, cinematic realism, next-gen graphics, photogrammetry quality`
-        }
-      ]
-
-      // Generate images in parallel as fallback
-      const generateImagePromise = async (variation: typeof styleVariations[0], index: number) => {
-      try {
-        console.log(`🎨 Generating ${variation.name} (${index + 1}/4) with BytePlus...`)
-
-        // BytePlus API call following the Python SDK pattern
-        const requestBody = {
+        return NextResponse.json({
+          error: 'BytePlus image generation failed',
+          details: `API error (${imageResponse.status}): ${responseText.substring(0, 300)}`,
           model: byteplusModel,
-          prompt: variation.prompt,
-          image: referenceImages, // Array of base64 data URLs
-          response_format: 'b64_json', // Get base64 response
-          size: '1440x2560', // Portrait size matching your example
-          watermark: false,
-        }
-
-        console.log(`🔧 Request for ${variation.name}:`, {
-          model: requestBody.model,
-          promptLength: requestBody.prompt.length,
-          imageCount: requestBody.image.length,
-          size: requestBody.size,
-        })
-
-        const imageResponse = await fetch(`${byteplusBaseUrl}/images/generations`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${byteplusApiKey}`,
-          },
-          body: JSON.stringify(requestBody),
-        })
-
-        if (imageResponse.ok) {
-          const imageData = await imageResponse.json()
-
-          // Check for image data in response
-          if (imageData.data?.[0]?.b64_json) {
-            const base64Image = `data:image/jpeg;base64,${imageData.data[0].b64_json}`
-            console.log(`✅ ${variation.name} generated successfully`)
-            return { success: true, image: base64Image, style: variation.name }
-          } else if (imageData.data?.[0]?.url) {
-            // If URL format is returned
-            const base64Image = imageData.data[0].url
-            console.log(`✅ ${variation.name} generated successfully (URL format)`)
-            return { success: true, image: base64Image, style: variation.name }
-          }
-
-          const errorMsg = `No image data found in response: ${JSON.stringify(imageData).substring(0, 200)}`
-          console.error(`❌ ${variation.name}: ${errorMsg}`)
-          return { success: false, error: errorMsg, style: variation.name }
-        } else {
-          const errorText = await imageResponse.text()
-          const errorMsg = `API error (${imageResponse.status}): ${errorText.substring(0, 200)}`
-          console.error(`❌ ${variation.name}: ${errorMsg}`)
-          return { success: false, error: errorMsg, style: variation.name }
-        }
-      } catch (error) {
-        const errorMsg = `Exception: ${error instanceof Error ? error.message : String(error)}`
-        console.error(`❌ ${variation.name}: ${errorMsg}`)
-        return { success: false, error: errorMsg, style: variation.name }
+          suggestion: 'BytePlus API rejected the request. Check terminal logs for details.'
+        }, { status: 500 })
       }
-    }
 
-      // Generate all 4 images in parallel as fallback
-      const results = await Promise.all(
-        styleVariations.map((variation, index) => generateImagePromise(variation, index))
-      )
+      const imageData = JSON.parse(responseText)
 
-      // Collect successful images and errors
-      images = results
-        .filter(result => result.success)
-        .map(result => result.image as string)
-
-      results.forEach((result, index) => {
-        if (!result.success) {
-          errors.push(`${result.style}: ${result.error}`)
-        }
+      console.log(`📦 BytePlus response:`, {
+        hasData: !!imageData.data,
+        dataLength: imageData.data?.length || 0,
       })
-    }
 
-    // If no images were generated successfully, return error info
-    if (images.length === 0) {
-      console.error('❌ No images generated with BytePlus')
+      // Check for image data in response
+      const images: string[] = []
+
+      if (imageData.data && Array.isArray(imageData.data)) {
+        for (const item of imageData.data) {
+          if (item.b64_json) {
+            const base64Image = `data:image/jpeg;base64,${item.b64_json}`
+            images.push(base64Image)
+            console.log(`✅ Generated image ${images.length}/${requestBody.n}`)
+          } else if (item.url) {
+            images.push(item.url)
+            console.log(`✅ Generated image ${images.length}/${requestBody.n} (URL format)`)
+          }
+        }
+      }
+
+      if (images.length === 0) {
+        const errorMsg = `No image data found in BytePlus response`
+        console.error(`❌ ${errorMsg}`)
+        console.log('📋 Response data:', JSON.stringify(imageData).substring(0, 500))
+
+        return NextResponse.json({
+          error: 'BytePlus returned no images',
+          details: errorMsg,
+          model: byteplusModel,
+          suggestion: 'BytePlus API call succeeded but returned no image data. Check terminal logs.'
+        }, { status: 500 })
+      }
+
+      console.log(`✨ Successfully generated ${images.length} images with BytePlus!`)
+
+      // Ensure we have 4 images (duplicate if needed)
+      while (images.length < 4) {
+        images.push(images[0])
+      }
 
       return NextResponse.json({
-        error: 'BytePlus image generation failed',
-        details: errors,
+        images: images.slice(0, 4),
+        rewrittenPrompt,
+        generated: true,
+        provider: 'BytePlus Seedream',
         model: byteplusModel,
-        suggestion: 'Please check: 1) API Key is valid 2) Model supports the requested parameters 3) Check terminal logs for detailed errors'
+        note: `Successfully generated ${images.length} images using BytePlus Seedream ${byteplusModel} with ${referenceImages.length} reference image(s)`
+      })
+
+    } catch (error) {
+      console.error('❌ Exception during BytePlus API call:', error)
+
+      return NextResponse.json({
+        error: 'BytePlus image generation exception',
+        details: error instanceof Error ? error.message : String(error),
+        model: byteplusModel,
+        suggestion: 'Check network connection, API Key, or see terminal logs for detailed errors'
       }, { status: 500 })
     }
 
-    console.log(`✨ Successfully generated ${images.length} images with BytePlus!`)
-
-    // Ensure 4 images are returned (if less than 4, duplicate existing ones)
-    while (images.length < 4) {
-      images.push(images[0])
-    }
-
-    return NextResponse.json({
-      images: images.slice(0, 4),
-      rewrittenPrompt,
-      generated: true,
-      provider: 'BytePlus Seedream',
-      model: byteplusModel,
-      note: `Successfully generated ${images.length} images using BytePlus Seedream ${byteplusModel}`
-    })
-
   } catch (error) {
-    console.error('❌ Error in BytePlus image generation:', error)
+    console.error('❌ Error in BytePlus route:', error)
 
     return NextResponse.json({
-      error: 'Exception occurred during BytePlus image generation',
+      error: 'Exception occurred in BytePlus route',
       details: error instanceof Error ? error.message : String(error),
-      suggestion: 'Please check network connection, API Key configuration, or see terminal logs for detailed errors'
+      suggestion: 'Check terminal logs for detailed errors'
     }, { status: 500 })
   }
 }
