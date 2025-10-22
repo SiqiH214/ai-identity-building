@@ -91,9 +91,40 @@ ai-identity-creator/
 3. **感觉鲜活** - 每个微交互都应该自然流畅
 4. **零摩擦迭代** - 从创意到生成再到重制，应该像刷TikTok一样快速
 
+## 🚀 部署到 Vercel
+
+### 方法 1: 通过 Vercel Web 界面（推荐）
+
+1. 访问 [Vercel](https://vercel.com)
+2. 使用 GitHub 账号登录
+3. 点击 "Add New Project"
+4. 导入仓库: `SiqiH214/ai-identity-building`
+5. 配置环境变量:
+   - `GEMINI_API_KEY`: 你的 Gemini API 密钥
+   - `GEMINI_IMAGE_MODEL`: `gemini-2.5-flash-image`
+6. 点击 "Deploy"
+
+### 方法 2: 通过 Vercel CLI
+
+```bash
+# 登录 Vercel
+vercel login
+
+# 部署
+vercel
+
+# 部署到生产环境
+vercel --prod
+```
+
+部署后，你的应用将在 `https://ai-identity-building.vercel.app` 上线！
+
 ## 🔮 路线图
 
-- [ ] 集成真实的 Gemini API
+- [x] 集成 Gemini AI API
+- [x] 多角色共创功能
+- [x] 位置和服装选择
+- [x] 轮播结果展示
 - [ ] 视频生成功能
 - [ ] 用户账户系统
 - [ ] 身份库和模板
