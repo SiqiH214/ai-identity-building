@@ -108,6 +108,9 @@ Provide a comprehensive 3-4 sentence description that captures all these element
 
     // Build parts array with structured multi-image prompt
     const rewriteParts: any[] = []
+    let rewrittenPrompt = ''
+
+    try {
 
     if (hasMultipleCharacters) {
       // Multi-character: Following Google's official pattern
@@ -137,7 +140,11 @@ Rewrite this into ONE professional prompt:`
         },
       })
 
-      coCreateImages.forEach((img: string) => {
+      coCreateImages.forEach((img: string, index: number) => {
+        if (!img || typeof img !== 'string') {
+          console.error(`❌ Co-create image ${index} is invalid:`, img)
+          return
+        }
         rewriteParts.push({
           inline_data: {
             mime_type: img.startsWith('data:image/png') ? 'image/png' : 'image/jpeg',
@@ -199,8 +206,6 @@ Now rewrite the user's intent into a single, detailed professional prompt:`
       }
     )
 
-    let rewrittenPrompt = ''
-
     if (rewriteResponse.ok) {
       const rewriteData = await rewriteResponse.json()
       if (rewriteData.candidates?.[0]?.content?.parts?.[0]?.text) {
@@ -213,6 +218,11 @@ Now rewrite the user's intent into a single, detailed professional prompt:`
     } else {
       const errorText = await rewriteResponse.text()
       console.error('❌ Rewrite API error:', errorText.substring(0, 500))
+    }
+
+    } catch (rewriteError) {
+      console.error('❌ Error during prompt rewrite:', rewriteError)
+      rewrittenPrompt = ''
     }
 
     // If rewrite fails, use simple version
