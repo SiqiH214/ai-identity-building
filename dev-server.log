@@ -1,0 +1,681 @@
+
+> ai-identity-creator@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.33
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 994ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1005ms (1093 modules)
+ GET / 200 in 1318ms
+ ✓ Compiled in 250ms (554 modules)
+ ✓ Compiled /api/generate in 112ms (569 modules)
+🎨 Using model: gemini-2.5-flash-image
+📝 User intent: I am eating ice cream
+
+🖼️  Image size: 805979 bytes
+✍️  Rewriting prompt as professional photographer...
+✅ Prompt rewritten professionally
+📝 Rewritten: Professional photograph of the person from this image, seated at an outdoor cafe during late afternoon golden hour, holding a melting ice cream cone w...
+🖼️  Generating 4 image variations...
+🎨 Generating image 1/4...
+✅ Image 1 generated successfully
+🎨 Generating image 2/4...
+✅ Image 2 generated successfully
+🎨 Generating image 3/4...
+✅ Image 3 generated successfully
+🎨 Generating image 4/4...
+✅ Image 4 generated successfully
+✨ Successfully generated 4 images!
+ POST /api/generate 200 in 37923ms
+ ✓ Compiled in 411ms (1093 modules)
+ ✓ Compiled in 107ms (554 modules)
+ ✓ Compiled in 231ms (1093 modules)
+ ✓ Compiled in 190ms (1093 modules)
+ ✓ Compiled in 423ms (1093 modules)
+ ✓ Compiled in 353ms (1093 modules)
+ ✓ Compiled in 130ms (1093 modules)
+ ✓ Compiled in 102ms (1093 modules)
+ ✓ Compiled in 101ms (1093 modules)
+ ✓ Compiled in 231ms (1093 modules)
+ ✓ Compiled in 150ms (1093 modules)
+ ✓ Compiled in 116ms (1093 modules)
+ GET / 200 in 91ms
+ ✓ Compiled /api/generate in 166ms (569 modules)
+🎨 Using model: gemini-2.5-flash-image
+📝 User intent: I am eating ice cream in Hollywood Street, LA
+🖼️  Image size: 805979 bytes
+✍️  Rewriting prompt as professional photographer...
+✅ Prompt rewritten professionally
+📝 Rewritten: Professional photograph of the person from this image, candid street shot, enjoying an ice cream cone on a vibrant Hollywood Street, Los Angeles. Gold...
+🖼️  Generating 4 image variations in parallel...
+🎨 Generating Instagram Realistic (1/4)...
+🎨 Generating Surreal Pinterest (2/4)...
+🎨 Generating Anime Style (3/4)...
+🎨 Generating Unreal Engine (4/4)...
+✅ Instagram Realistic generated successfully
+✅ Surreal Pinterest generated successfully
+✅ Anime Style generated successfully
+✅ Unreal Engine generated successfully
+✨ Successfully generated 4 images!
+ POST /api/generate 200 in 12318ms
+🎨 Using model: gemini-2.5-flash-image
+📝 User intent: listening to music in Hollywood Street, LA
+🖼️  Image size: 805979 bytes
+✍️  Rewriting prompt as professional photographer...
+✅ Prompt rewritten professionally
+📝 Rewritten: Professional photograph of the person from this image, captured in a candid moment, listening to music through headphones in Hollywood Street, Los Ang...
+🖼️  Generating 4 image variations in parallel...
+🎨 Generating Instagram Realistic (1/4)...
+🎨 Generating Surreal Pinterest (2/4)...
+🎨 Generating Anime Style (3/4)...
+🎨 Generating Unreal Engine (4/4)...
+✅ Surreal Pinterest generated successfully
+✅ Anime Style generated successfully
+✅ Instagram Realistic generated successfully
+✅ Unreal Engine generated successfully
+✨ Successfully generated 4 images!
+ POST /api/generate 200 in 19976ms
+ GET / 200 in 102ms
+ GET / 200 in 26ms
+ ✓ Compiled in 472ms (1093 modules)
+ ✓ Compiled in 148ms (1093 modules)
+ ✓ Compiled in 120ms (1093 modules)
+ ✓ Compiled in 115ms (1093 modules)
+ GET / 200 in 91ms
+ GET / 200 in 34ms
+ GET / 200 in 32ms
+ ✓ Compiled in 215ms (1093 modules)
+ ✓ Compiled in 149ms (1093 modules)
+ ✓ Compiled in 160ms (1093 modules)
+ ✓ Compiled in 122ms (1093 modules)
+ ✓ Compiled in 102ms (1093 modules)
+ ✓ Compiled in 122ms (1093 modules)
+ ✓ Compiled in 119ms (1093 modules)
+ GET / 200 in 75ms
+ GET / 200 in 30ms
+ GET / 200 in 39ms
+ ✓ Compiled in 493ms (1093 modules)
+ GET / 200 in 92ms
+ GET / 200 in 34ms
+ GET / 200 in 23ms
+ ✓ Compiled in 176ms (1093 modules)
+ ✓ Compiled in 110ms (1093 modules)
+ ✓ Compiled in 114ms (1093 modules)
+ ✓ Compiled in 105ms (1093 modules)
+ ✓ Compiled in 111ms (1093 modules)
+ ✓ Compiled in 116ms (1093 modules)
+ GET / 200 in 91ms
+ ✓ Compiled in 160ms (1093 modules)
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ GET / 500 in 1005ms
+ ○ Compiling /_error ...
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|/Users/siqihe/siqi-vibe/ai-identity building/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!/Users/siqihe/siqi-vibe/ai-identity building/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!/Users/siqihe/siqi-vibe/ai-identity building/app/globals.css': No serializer registered for PostCSSSyntaxError
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> webpack/lib/ModuleBuildError -> PostCSSSyntaxError
+ GET / 500 in 18ms
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ ⨯ ./app/globals.css:50:5
+Syntax error: /Users/siqihe/siqi-vibe/ai-identity building/app/globals.css The `bg-white/8` class does not exist. If `bg-white/8` is a custom class, make sure it is defined within a `@layer` directive.
+
+  48 |   /* iOS Frosted Glass Card */
+  49 |   .glass-card {
+> 50 |     @apply bg-white/8 backdrop-blur-3xl rounded-3xl border border-white/10;
+     |     ^
+  51 |     background: rgba(255, 255, 255, 0.08);
+  52 |     box-shadow:
+ GET / 500 in 24ms
+ GET / 500 in 24ms
+ GET / 500 in 23ms
+<w> [webpack.cache.PackFileCacheStrategy] Skipped not serializable cache item 'Compilation/modules|/Users/siqihe/siqi-vibe/ai-identity building/node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!/Users/siqihe/siqi-vibe/ai-identity building/node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!/Users/siqihe/siqi-vibe/ai-identity building/app/globals.css': No serializer registered for PostCSSSyntaxError
+<w> while serializing webpack/lib/cache/PackFileCacheStrategy.PackContentItems -> webpack/lib/NormalModule -> webpack/lib/ModuleBuildError -> PostCSSSyntaxError
+ ✓ Compiled /_error in 372ms (1320 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 176ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 704ms (1323 modules)
+ ✓ Compiled in 165ms (1323 modules)
+ ✓ Compiled in 143ms (1323 modules)
+ GET / 200 in 55ms
+ GET / 200 in 47ms
+ ✓ Compiled in 225ms (1306 modules)
+ ✓ Compiled in 80ms (1306 modules)
+ GET / 200 in 99ms
+ ✓ Compiled in 429ms (1320 modules)
+ GET / 200 in 89ms
+ ✓ Compiled in 357ms (1320 modules)
+ GET / 200 in 85ms
+ ✓ Compiled in 250ms (1320 modules)
+ GET / 200 in 65ms
+ ✓ Compiled /api/generate in 269ms (610 modules)
+🎨 Using model: gemini-2.5-flash-image
+📝 User intent: I am reading book
+🖼️  Image size: 2350434 bytes
+✍️  Rewriting prompt as professional photographer...
+✅ Prompt rewritten professionally
+📝 Rewritten: Professional photograph of the person from this image, candid shot, lying comfortably in bed under soft, warm lamplight, engrossed in reading a paperb...
+🖼️  Generating 4 image variations in parallel...
+🎨 Generating Instagram Realistic (1/4)...
+🎨 Generating Surreal Pinterest (2/4)...
+🎨 Generating Anime Style (3/4)...
+🎨 Generating Unreal Engine (4/4)...
+✅ Instagram Realistic generated successfully
+✅ Unreal Engine generated successfully
+✅ Anime Style generated successfully
+✅ Surreal Pinterest generated successfully
+✨ Successfully generated 4 images!
+ POST /api/generate 200 in 12219ms
+ GET / 200 in 78ms
+ ✓ Compiled in 375ms (1320 modules)
+ ✓ Compiled in 180ms (1322 modules)
+ GET / 200 in 106ms
+ ✓ Compiled in 154ms (1322 modules)
+ ✓ Compiled /_not-found in 116ms (1311 modules)
+ GET /avatar%20photo/Amy.jpg 404 in 162ms
+ GET /avatar%20photo/Anna.jpg 404 in 162ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 162ms
+ GET /avatar%20photo/Kay.jpg 404 in 19ms
+ GET /avatar%20photo/Guy.jpg 404 in 20ms
+ GET /avatar%20photo/KK.jpg 404 in 18ms
+ GET /avatar%20photo/Kool.jpg 404 in 19ms
+ GET /avatar%20photo/Lily.jpg 404 in 21ms
+ GET /avatar%20photo/Zoey.jpg 404 in 20ms
+ ✓ Compiled in 189ms (1325 modules)
+ ✓ Compiled in 160ms (1325 modules)
+ ✓ Compiled in 159ms (1325 modules)
+ GET / 200 in 51ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 52ms
+ GET /avatar%20photo/Anna.jpg 404 in 58ms
+ GET /avatar%20photo/Amy.jpg 404 in 60ms
+ GET /avatar%20photo/Guy.jpg 404 in 51ms
+ GET /avatar%20photo/Kay.jpg 404 in 52ms
+ GET /avatar%20photo/KK.jpg 404 in 56ms
+ GET /avatar%20photo/Lily.jpg 404 in 33ms
+ GET /avatar%20photo/Zoey.jpg 404 in 35ms
+ GET /avatar%20photo/Kool.jpg 404 in 34ms
+ GET / 200 in 32ms
+ GET /avatar%20photo/Amy.jpg 404 in 47ms
+ GET /avatar%20photo/Guy.jpg 404 in 46ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 47ms
+ GET /avatar%20photo/Kay.jpg 404 in 46ms
+ GET /avatar%20photo/Anna.jpg 404 in 51ms
+ GET /avatar%20photo/KK.jpg 404 in 59ms
+ GET /avatar%20photo/Zoey.jpg 404 in 24ms
+ GET /avatar%20photo/Kool.jpg 404 in 23ms
+ GET /avatar%20photo/Lily.jpg 404 in 22ms
+ GET / 200 in 30ms
+ GET /avatar%20photo/Guy.jpg 404 in 40ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 42ms
+ GET /avatar%20photo/Anna.jpg 404 in 47ms
+ GET /avatar%20photo/Amy.jpg 404 in 56ms
+ GET /avatar%20photo/Kay.jpg 404 in 48ms
+ GET /avatar%20photo/KK.jpg 404 in 56ms
+ GET /avatar%20photo/Zoey.jpg 404 in 24ms
+ GET /avatar%20photo/Lily.jpg 404 in 26ms
+ GET /avatar%20photo/Kool.jpg 404 in 25ms
+ GET / 200 in 26ms
+ GET /avatar%20photo/Amy.jpg 404 in 46ms
+ GET /avatar%20photo/Guy.jpg 404 in 40ms
+ GET /avatar%20photo/Kay.jpg 404 in 40ms
+ GET /avatar%20photo/Anna.jpg 404 in 43ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 43ms
+ GET /avatar%20photo/KK.jpg 404 in 54ms
+ GET /avatar%20photo/Kool.jpg 404 in 27ms
+ GET /avatar%20photo/Zoey.jpg 404 in 27ms
+ GET /avatar%20photo/Lily.jpg 404 in 26ms
+ ✓ Compiled in 375ms (1325 modules)
+ GET / 200 in 47ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 45ms
+ GET /avatar%20photo/Guy.jpg 404 in 45ms
+ GET /avatar%20photo/Anna.jpg 404 in 50ms
+ GET /avatar%20photo/Amy.jpg 404 in 53ms
+ GET /avatar%20photo/Kay.jpg 404 in 48ms
+ GET /avatar%20photo/KK.jpg 404 in 52ms
+ GET /avatar%20photo/Lily.jpg 404 in 27ms
+ GET /avatar%20photo/Zoey.jpg 404 in 28ms
+ GET /avatar%20photo/Kool.jpg 404 in 26ms
+ GET /avatar%20photo/Amy.jpg 404 in 50ms
+ GET /avatar%20photo/KK.jpg 404 in 44ms
+ GET /avatar%20photo/Kay.jpg 404 in 45ms
+ GET /avatar%20photo/Guy.jpg 404 in 46ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 47ms
+ GET /avatar%20photo/Anna.jpg 404 in 48ms
+ GET /avatar%20photo/Kool.jpg 404 in 22ms
+ GET /avatar%20photo/Zoey.jpg 404 in 20ms
+ GET /avatar%20photo/Lily.jpg 404 in 20ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 65ms
+ GET /avatar%20photo/Anna.jpg 404 in 67ms
+ GET /avatar%20photo/Amy.jpg 404 in 72ms
+ GET /avatar%20photo/Guy.jpg 404 in 61ms
+ GET /avatar%20photo/KK.jpg 404 in 57ms
+ GET /avatar%20photo/Kay.jpg 404 in 58ms
+ GET /avatar%20photo/Kool.jpg 404 in 25ms
+ GET /avatar%20photo/Lily.jpg 404 in 24ms
+ GET /avatar%20photo/Zoey.jpg 404 in 23ms
+ GET /avatar%20photo/Guy.jpg 404 in 48ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 51ms
+ GET /avatar%20photo/Anna.jpg 404 in 53ms
+ GET /avatar%20photo/Amy.jpg 404 in 56ms
+ GET /avatar%20photo/KK.jpg 404 in 45ms
+ GET /avatar%20photo/Kay.jpg 404 in 47ms
+ GET /avatar%20photo/Lily.jpg 404 in 23ms
+ GET /avatar%20photo/Kool.jpg 404 in 25ms
+ GET /avatar%20photo/Zoey.jpg 404 in 22ms
+ ✓ Compiled in 378ms (1329 modules)
+ GET / 200 in 52ms
+ GET /avatar%20photo/Amy.jpg 404 in 80ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 77ms
+ GET /avatar%20photo/Anna.jpg 404 in 81ms
+ GET /avatar%20photo/Guy.jpg 404 in 79ms
+ GET /avatar%20photo/Kay.jpg 404 in 79ms
+ GET /avatar%20photo/KK.jpg 404 in 78ms
+ GET /avatar%20photo/Lily.jpg 404 in 30ms
+ GET /avatar%20photo/Kool.jpg 404 in 34ms
+ GET /avatar%20photo/Zoey.jpg 404 in 29ms
+ GET / 200 in 25ms
+ GET /avatar%20photo/Amy.jpg 404 in 48ms
+ GET /avatar%20photo/Anna.jpg 404 in 47ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 46ms
+ GET /avatar%20photo/Guy.jpg 404 in 47ms
+ GET /avatar%20photo/Kay.jpg 404 in 49ms
+ GET /avatar%20photo/KK.jpg 404 in 53ms
+ GET /avatar%20photo/Lily.jpg 404 in 25ms
+ GET /avatar%20photo/Zoey.jpg 404 in 23ms
+ GET /avatar%20photo/Kool.jpg 404 in 27ms
+ GET / 200 in 39ms
+ GET /avatar%20photo/Amy.jpg 404 in 68ms
+ GET /avatar%20photo/Anna.jpg 404 in 60ms
+ GET /avatar%20photo/Kay.jpg 404 in 54ms
+ GET /avatar%20photo/Guy.jpg 404 in 54ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 59ms
+ GET /avatar%20photo/KK.jpg 404 in 48ms
+ GET /avatar%20photo/Lily.jpg 404 in 35ms
+ GET /avatar%20photo/Zoey.jpg 404 in 40ms
+ GET /avatar%20photo/Kool.jpg 404 in 38ms
+ GET / 200 in 35ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 45ms
+ GET /avatar%20photo/Amy.jpg 404 in 51ms
+ GET /avatar%20photo/Anna.jpg 404 in 49ms
+ GET /avatar%20photo/Guy.jpg 404 in 47ms
+ GET /avatar%20photo/Kay.jpg 404 in 50ms
+ GET /avatar%20photo/KK.jpg 404 in 56ms
+ GET /avatar%20photo/Zoey.jpg 404 in 30ms
+ GET /avatar%20photo/Lily.jpg 404 in 29ms
+ GET /avatar%20photo/Kool.jpg 404 in 30ms
+ GET /avatar%20photo/Kay.jpg 404 in 46ms
+ GET /avatar%20photo/Guy.jpg 404 in 48ms
+ GET /avatar%20photo/BillyEllish.webp 404 in 48ms
+ GET /avatar%20photo/Anna.jpg 404 in 50ms
+ GET /avatar%20photo/Amy.jpg 404 in 52ms
+ GET /avatar%20photo/KK.jpg 404 in 47ms
+ GET /avatar%20photo/Kool.jpg 404 in 23ms
+ GET /avatar%20photo/Zoey.jpg 404 in 21ms
+ GET /avatar%20photo/Lily.jpg 404 in 22ms
+ ✓ Compiled in 259ms (1315 modules)
+ GET / 200 in 97ms
+ ✓ Compiled in 387ms (1326 modules)
+ ✓ Compiled in 171ms (1326 modules)
+ ✓ Compiled in 226ms (1326 modules)
+ GET / 200 in 87ms
+ ✓ Compiled in 303ms (1326 modules)
+ GET / 200 in 76ms
+ ✓ Compiled in 216ms (1326 modules)
+ GET / 200 in 115ms
+ ✓ Compiled in 301ms (1326 modules)
+ ✓ Compiled in 141ms (1326 modules)
+ ✓ Compiled in 327ms (1324 modules)
+ GET / 200 in 204ms
+ GET / 200 in 44ms
+ GET / 200 in 32ms
+ GET / 200 in 42ms
+ GET / 200 in 73ms
+ GET / 200 in 37ms
+ ✓ Compiled in 269ms (1324 modules)
+ GET / 200 in 108ms
+ ✓ Compiled in 323ms (1324 modules)
+ ✓ Compiled in 162ms (1322 modules)
+ GET / 200 in 107ms
+ ✓ Compiled in 221ms (1324 modules)
+ GET / 200 in 51ms
+ ✓ Compiled in 176ms (1324 modules)
+ ✓ Compiled in 173ms (1324 modules)
+ ✓ Compiled in 150ms (1324 modules)
+ ✓ Compiled in 208ms (1324 modules)
+ ✓ Compiled in 148ms (1324 modules)
+ GET / 200 in 92ms
+ ✓ Compiled /api/generate in 162ms (612 modules)
+🎨 Using model: gemini-2.5-flash-image
+📝 User intent: I am eating ice cream
+ in Hollywood Boulevard
+🖼️  Image size: 805979 bytes
+✍️  Rewriting prompt as professional photographer...
+✅ Prompt rewritten professionally
+📝 Rewritten: Professional photograph of the person from this image, seated outdoors on a sun-drenched Hollywood Boulevard, enjoying an ice cream cone. The backgrou...
+🖼️  Generating 4 image variations in parallel...
+🎨 Generating Instagram Realistic (1/4)...
+🎨 Generating Surreal Pinterest (2/4)...
+🎨 Generating Anime Style (3/4)...
+🎨 Generating Unreal Engine (4/4)...
+✅ Anime Style generated successfully
+✅ Unreal Engine generated successfully
+✅ Instagram Realistic generated successfully
+✅ Surreal Pinterest generated successfully
+✨ Successfully generated 4 images!
+ POST /api/generate 200 in 11041ms
+ POST /api/generate 400 in 35ms
+ GET / 200 in 122ms
+ GET / 200 in 126ms
+ ✓ Compiled in 510ms (1324 modules)
+ ✓ Compiled in 151ms (1324 modules)
+ GET / 200 in 162ms
+ ✓ Compiled in 264ms (1324 modules)
+ ✓ Compiled in 447ms (1324 modules)
+ ✓ Compiled in 375ms (1324 modules)
+ ✓ Compiled in 244ms (1324 modules)
+ GET / 200 in 127ms
+ ✓ Compiled in 245ms (1324 modules)
+ ✓ Compiled in 183ms (1324 modules)
+ ✓ Compiled in 163ms (1324 modules)
+ GET / 200 in 89ms
+ ✓ Compiled in 185ms (1324 modules)
+ ✓ Compiled in 147ms (1324 modules)
+ ✓ Compiled in 163ms (1324 modules)
+ GET / 200 in 103ms
+ ✓ Compiled in 256ms (1324 modules)
+ ✓ Compiled in 146ms (1324 modules)
+ ✓ Compiled in 169ms (1324 modules)
+ ✓ Compiled in 197ms (1324 modules)
+ ✓ Compiled in 187ms (1324 modules)
+ ✓ Compiled in 274ms (1324 modules)
+ ✓ Compiled /_not-found in 349ms (1313 modules)
+ GET /_next/static/css/app/layout.css?v=1761117607339 404 in 411ms
+ GET / 200 in 64ms
+ GET /_next/static/css/app/layout.css?v=1761117610000 404 in 41ms
+ GET /_next/static/chunks/main-app.js?v=1761117610000 404 in 32ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 31ms
+ GET / 200 in 34ms
+ GET /_next/static/css/app/layout.css?v=1761117610935 404 in 51ms
+ GET /_next/static/chunks/main-app.js?v=1761117610935 404 in 32ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 31ms
+ GET / 200 in 97ms
+ GET /_next/static/css/app/layout.css?v=1761117611734 404 in 41ms
+ GET /_next/static/chunks/main-app.js?v=1761117611734 404 in 34ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 28ms
+ GET / 200 in 39ms
+ GET /_next/static/css/app/layout.css?v=1761117617502 404 in 36ms
+ GET /_next/static/chunks/main-app.js?v=1761117617502 404 in 38ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 35ms
+ GET / 200 in 36ms
+ GET /_next/static/css/app/layout.css?v=1761117618158 404 in 57ms
+ GET /_next/static/chunks/main-app.js?v=1761117618158 404 in 49ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 41ms
+ ✓ Compiled in 215ms (1327 modules)
+ GET / 200 in 80ms
+ GET /_next/static/css/app/layout.css?v=1761117622197 404 in 46ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 32ms
+ GET /_next/static/chunks/main-app.js?v=1761117622197 404 in 35ms
+ GET / 200 in 34ms
+ GET /_next/static/css/app/layout.css?v=1761117623169 404 in 50ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 34ms
+ GET /_next/static/chunks/main-app.js?v=1761117623169 404 in 43ms
+ ✓ Compiled in 472ms (1324 modules)
+ ✓ Compiled in 174ms (1324 modules)
+ ✓ Compiled in 217ms (1324 modules)
+ ✓ Compiled in 200ms (1324 modules)
+ ✓ Compiled in 154ms (1324 modules)
+ ✓ Compiled in 186ms (1324 modules)
+ ✓ Compiled in 148ms (1324 modules)
+ ✓ Compiled in 308ms (1324 modules)
+ ✓ Compiled in 240ms (1324 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 288ms (1324 modules)
+ ✓ Compiled in 239ms (1324 modules)
+ ✓ Compiled in 211ms (1324 modules)
+ ✓ Compiled in 161ms (1310 modules)
+ ✓ Compiled in 153ms (1324 modules)
+ ✓ Compiled in 177ms (742 modules)
+ ✓ Compiled in 116ms (742 modules)
+ ✓ Compiled in 122ms (742 modules)
+ ✓ Compiled in 99ms (742 modules)
+ ✓ Compiled in 481ms (1324 modules)
+ ✓ Compiled in 226ms (1324 modules)
+ ✓ Compiled in 166ms (1324 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/2.pack.gz_' -> '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/2.pack.gz'
+ ✓ Compiled in 286ms (1324 modules)
+ ✓ Compiled in 174ms (1324 modules)
+ ✓ Compiled in 176ms (1324 modules)
+ ✓ Compiled in 145ms (742 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/1.pack.gz_' -> '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/1.pack.gz'
+ ✓ Compiled in 133ms (742 modules)
+ ✓ Compiled in 97ms (742 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 348ms (1324 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/0.pack.gz_' -> '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/0.pack.gz'
+ ✓ Compiled in 234ms (1324 modules)
+ ✓ Compiled in 304ms (1324 modules)
+ ✓ Compiled in 174ms (1324 modules)
+ ✓ Compiled in 206ms (1324 modules)
+ ✓ Compiled in 202ms (1324 modules)
+ ✓ Compiled in 258ms (1324 modules)
+ ⨯ ./components/IdentitySection.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+     ,-[[36;1;4m/Users/siqihe/siqi-vibe/ai-identity building/components/IdentitySection.tsx[0m:132:1]
+ [2m132[0m |   }
+ [2m133[0m | 
+ [2m134[0m |   return (
+ [2m135[0m |     <div className="relative w-full h-full flex flex-col items-center justify-center">
+     : [31;1m     ^^^[0m
+ [2m136[0m |                 {savedIdentities.length > 0 && (
+ [2m137[0m |                   <>
+ [2m138[0m |                     {savedIdentities.map((identity) => (
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/IdentitySection.tsx
+./app/page.tsx
+ ⨯ ./components/IdentitySection.tsx
+Error: 
+  [31mx[0m Expression expected
+     ,-[[36;1;4m/Users/siqihe/siqi-vibe/ai-identity building/components/IdentitySection.tsx[0m:466:1]
+ [2m466[0m |                     ))}
+ [2m467[0m |                     <div className="border-t border-white/10 my-2" />
+ [2m468[0m |                   </>
+ [2m469[0m |                 )}
+     : [31;1m                ^[0m
+ [2m470[0m |                 <button
+ [2m471[0m |                   onClick={() => {
+ [2m472[0m |                     fileInputRef.current?.click()
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/IdentitySection.tsx
+./app/page.tsx
+ ⨯ ./components/IdentitySection.tsx
+Error: 
+  [31mx[0m Expression expected
+     ,-[[36;1;4m/Users/siqihe/siqi-vibe/ai-identity building/components/IdentitySection.tsx[0m:620:1]
+ [2m620[0m |         accept="image/jpeg,image/png,image/jpg"
+ [2m621[0m |         onChange={handleFileUpload}
+ [2m622[0m |         className="hidden"
+ [2m623[0m |       />
+     : [31;1m       ^[0m
+ [2m624[0m |     </div>
+ [2m625[0m |   )
+ [2m626[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/IdentitySection.tsx
+./app/page.tsx
+ ⨯ ./components/IdentitySection.tsx
+Error: 
+  [31mx[0m Expression expected
+     ,-[[36;1;4m/Users/siqihe/siqi-vibe/ai-identity building/components/IdentitySection.tsx[0m:620:1]
+ [2m620[0m |         accept="image/jpeg,image/png,image/jpg"
+ [2m621[0m |         onChange={handleFileUpload}
+ [2m622[0m |         className="hidden"
+ [2m623[0m |       />
+     : [31;1m       ^[0m
+ [2m624[0m |     </div>
+ [2m625[0m |   )
+ [2m626[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/IdentitySection.tsx
+./app/page.tsx
+ ⨯ ./components/IdentitySection.tsx
+Error: 
+  [31mx[0m Expression expected
+     ,-[[36;1;4m/Users/siqihe/siqi-vibe/ai-identity building/components/IdentitySection.tsx[0m:620:1]
+ [2m620[0m |         accept="image/jpeg,image/png,image/jpg"
+ [2m621[0m |         onChange={handleFileUpload}
+ [2m622[0m |         className="hidden"
+ [2m623[0m |       />
+     : [31;1m       ^[0m
+ [2m624[0m |     </div>
+ [2m625[0m |   )
+ [2m626[0m | }
+     `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/IdentitySection.tsx
+./app/page.tsx
+ ✓ Compiled in 186ms (1318 modules)
+ ✓ Compiled in 461ms (1318 modules)
+ ✓ Compiled in 237ms (1318 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/1.pack.gz_' -> '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/1.pack.gz'
+ GET / 200 in 178ms

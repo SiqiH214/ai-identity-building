@@ -1,0 +1,73 @@
+# Cursor Rules for AI Identity Creator
+
+## 项目概述
+这是一个情感化的 AI 创作工具，让用户使用自己的身份生成个性化图像和视频。
+
+## 开发原则
+
+### 1. 用户体验优先
+- 始终从情感出发，而非技术控制
+- 使用自然、对话式的文案，避免技术术语
+- 所有交互应该流畅、即时反馈
+- 动画和过渡应该细腻、自然
+
+### 2. 代码风格
+- 使用 TypeScript 严格模式
+- 组件采用函数式写法
+- 使用 Tailwind CSS 进行样式设计
+- 优先使用 Framer Motion 处理动画
+
+### 3. 文件组织
+- 每个组件一个文件
+- 共享常量放在 `lib/constants.ts`
+- API 工具函数放在 `lib/api.ts`
+- 类型定义就近声明或放在组件文件中
+
+### 4. 命名约定
+- 组件名使用 PascalCase
+- 函数名使用 camelCase
+- 常量使用 UPPER_SNAKE_CASE
+- 文件名与组件名保持一致
+
+### 5. 性能优化
+- 图片使用 Next.js Image 组件
+- 适当使用 React.memo 避免不必要的重渲染
+- 大型列表使用虚拟滚动
+- 懒加载非关键组件
+
+### 6. 渐进式展示
+- 不要一次性显示所有功能
+- 根据用户操作逐步展示更多选项
+- 保持界面简洁，避免信息过载
+
+### 7. Mock 数据策略
+- 在真实 API 未完成前使用 mock 数据
+- Mock 数据应该真实、有代表性
+- API 失败时优雅降级到 mock 数据
+
+## 技术栈
+
+- **框架**: Next.js 14 + React 18
+- **样式**: Tailwind CSS
+- **动画**: Framer Motion
+- **图标**: Lucide React
+- **语言**: TypeScript
+- **API**: Gemini Nanobanana (图像生成)
+
+## 常用命令
+
+```bash
+npm run dev      # 开发服务器
+npm run build    # 生产构建
+npm run start    # 启动生产服务器
+npm run lint     # 代码检查
+```
+
+## 注意事项
+
+- 所有用户可见文本使用中文
+- 代码注释使用中文
+- commit 信息使用中文
+- 保持设计的温暖感和现代感
+- 避免使用过于技术化的UI元素
+
