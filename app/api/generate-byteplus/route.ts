@@ -89,8 +89,6 @@ export async function POST(request: NextRequest) {
     // Step 2: Generate 4 images using BytePlus Seedream in ONE call
     console.log('🖼️  Generating 4 images with BytePlus Seedream in a single API call...')
 
-    const errors: string[] = []
-
     // Prepare reference images array
     const referenceImages: string[] = [selfie]
 
