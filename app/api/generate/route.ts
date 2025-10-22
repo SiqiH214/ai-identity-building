@@ -101,6 +101,11 @@ Provide a comprehensive 3-4 sentence description that captures all these element
     // Step 1: 使用专业摄影师的视角重写用户的提示词（保持身份）
     console.log('✍️  Rewriting prompt as professional photographer...')
 
+    // Prepare outfit instruction if available
+    const outfitInstruction = outfitDescription
+      ? `\n\nOUTFIT REFERENCE: The subject should be wearing: ${outfitDescription}\nMake sure to incorporate this outfit description into the final image.`
+      : ''
+
     // Build parts array with structured multi-image prompt
     const rewriteParts: any[] = []
 
@@ -148,41 +153,11 @@ Rewrite this into ONE professional prompt:`
           data: selfie.split(',')[1],
         },
       })
-    }
 
-    // Add the prompt text with outfit description if available
-    const outfitInstruction = outfitDescription
-      ? `\n\nOUTFIT REFERENCE: The subject should be wearing: ${outfitDescription}\nMake sure to incorporate this outfit description into the final image.`
-      : ''
-
-    rewriteParts.push({
-      text: hasMultipleCharacters
-        ? `You are a world-class professional Adobe photographer with exceptional taste in image generation and editing.
+      rewriteParts.push({
+        text: `You are a world-class professional Adobe photographer with exceptional taste in image generation and editing.
 
 User's intent: "${userIntent}"${outfitInstruction}
-
-Your task: Rewrite this into ONE professional image editing prompt that will be sent to Gemini's image generation API.
-
-CRITICAL REQUIREMENTS FOR MULTI-CHARACTER GENERATION:
-1. PRESERVE ALL subjects' facial identities, features, and essence EXACTLY as shown in the reference images
-2. Refer to people as "subject A", "subject B", "subject C" etc. based on the order of reference images provided
-3. The first image is subject A, the second image is subject B, and so on
-4. Describe how ALL subjects interact in the scene naturally
-5. Transform ONLY the scene, environment, lighting, clothing, pose, and atmosphere to match user's intent
-6. Use professional photography language: lighting techniques, camera specs, composition, depth of field
-7. Be specific about: time of day, weather, mood, color palette, styling
-8. Keep it photorealistic - no cartoon, illustration, or stylization
-9. Make it cinematic and high-quality
-
-Return ONLY the rewritten prompt text, no JSON, no explanation, just the prompt itself.
-
-Example format:
-"Professional photograph of subject A and subject B together, [scene description with their interaction], [lighting details], [clothing if relevant], [camera and lens specs], [quality descriptors], photorealistic, 8k quality, preserve both subjects' identities exactly"
-
-Now rewrite the user's intent into a single, detailed professional prompt using "subject A", "subject B" format:`
-        : `You are a world-class professional Adobe photographer with exceptional taste in image generation and editing.
-
-User's intent: "${userIntent}"
 
 Your task: Rewrite this into ONE professional image editing prompt that will be sent to Gemini's image generation API.
 
@@ -200,7 +175,8 @@ Example format:
 "Professional photograph of the person from this image, [scene description], [lighting details], [clothing if relevant], [camera and lens specs], [quality descriptors], photorealistic, 8k quality"
 
 Now rewrite the user's intent into a single, detailed professional prompt:`
-    })
+      })
+    }
 
     const rewriteResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${geminiApiKey}`,
