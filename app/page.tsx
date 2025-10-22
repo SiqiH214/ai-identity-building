@@ -133,51 +133,47 @@ export default function Home() {
   }
 
   return (
-    <main className="fixed inset-0 w-full h-full overflow-hidden">
-      <div className="w-full h-full max-w-md mx-auto flex flex-col">
-        {/* Identity/Results image area - scrollable */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="min-h-full flex items-center justify-center px-4 sm:px-6 py-4 sm:py-6">
-            {generatedImages.length > 0 && !isGenerating ? (
-              <ResultsSection
-                images={generatedImages}
-                onRegenerate={handleGenerate}
-                identityImage={identityImage}
-              />
-            ) : (
-              <IdentitySection
-                currentIdentity={currentIdentity}
-                identityImage={identityImage}
-                onIdentityChange={setCurrentIdentity}
-                onImageChange={setIdentityImage}
-                onIdentityNameChange={setIdentityName}
-                isGenerating={isGenerating}
-                selectedElements={selectedElements}
-                hasGenerated={hasGenerated}
-                identityName={identityName}
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Creation area - fixed at bottom */}
-        <div className="flex-none bg-gradient-to-t from-black/80 via-black/50 to-transparent backdrop-blur-lg border-t border-white/10">
-          <div className="px-4 sm:px-6 pb-safe pt-3 pb-4">
-            <CreationSection
-              onGenerate={handleGenerate}
-              isGenerating={isGenerating}
-              hasIdentity={!!identityImage}
-              hasGenerated={hasGenerated}
-              lastPrompt={lastPrompt}
-              selectedElements={selectedElements}
-              onElementsChange={setSelectedElements}
+    <main className="min-h-screen flex items-center justify-center py-safe">
+      <div className="w-full max-w-md mx-auto min-h-screen flex flex-col py-4 gap-4">
+        {/* Identity/Results image area */}
+        <div className="flex-1 min-h-0 flex items-center justify-center px-6">
+          {generatedImages.length > 0 && !isGenerating ? (
+            <ResultsSection
+              images={generatedImages}
+              onRegenerate={handleGenerate}
               identityImage={identityImage}
-              identityName={identityName}
+            />
+          ) : (
+            <IdentitySection
+              currentIdentity={currentIdentity}
+              identityImage={identityImage}
               onIdentityChange={setCurrentIdentity}
               onImageChange={setIdentityImage}
               onIdentityNameChange={setIdentityName}
+              isGenerating={isGenerating}
+              selectedElements={selectedElements}
+              hasGenerated={hasGenerated}
+              identityName={identityName}
             />
-          </div>
+          )}
+        </div>
+
+        {/* Creation area */}
+        <div className="flex-none px-6 pb-2">
+          <CreationSection
+            onGenerate={handleGenerate}
+            isGenerating={isGenerating}
+            hasIdentity={!!identityImage}
+            hasGenerated={hasGenerated}
+            lastPrompt={lastPrompt}
+            selectedElements={selectedElements}
+            onElementsChange={setSelectedElements}
+            identityImage={identityImage}
+            identityName={identityName}
+            onIdentityChange={setCurrentIdentity}
+            onImageChange={setIdentityImage}
+            onIdentityNameChange={setIdentityName}
+          />
         </div>
       </div>
     </main>
