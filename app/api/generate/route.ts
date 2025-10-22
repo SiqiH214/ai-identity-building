@@ -200,16 +200,21 @@ Now rewrite the user's intent into a single, detailed professional prompt:`
     )
 
     let rewrittenPrompt = ''
-    
+
     if (rewriteResponse.ok) {
       const rewriteData = await rewriteResponse.json()
       if (rewriteData.candidates?.[0]?.content?.parts?.[0]?.text) {
         rewrittenPrompt = rewriteData.candidates[0].content.parts[0].text.trim()
         console.log('✅ Prompt rewritten professionally')
         console.log('📝 Rewritten:', rewrittenPrompt.substring(0, 150) + '...')
+      } else {
+        console.error('⚠️ Rewrite response missing text:', JSON.stringify(rewriteData).substring(0, 500))
       }
+    } else {
+      const errorText = await rewriteResponse.text()
+      console.error('❌ Rewrite API error:', errorText.substring(0, 500))
     }
-    
+
     // If rewrite fails, use simple version
     if (!rewrittenPrompt) {
       console.log('⚠️  Prompt rewrite failed, using simple version')
