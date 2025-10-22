@@ -2,6 +2,8 @@
 
 一个流畅、情感化的创作工具，让创作者使用自己的身份（或虚拟身份）生成个性化的图像和视频。
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/SiqiH214/ai-identity-building&env=GEMINI_API_KEY,GEMINI_IMAGE_MODEL&envDescription=Required%20API%20keys%20for%20Gemini%20AI&envLink=https://github.com/SiqiH214/ai-identity-building/blob/main/DEPLOY.md)
+
 ## ✨ 核心理念
 
 这不是一个文本生成图像的工具，而是一个**真实的创作伴侣** —— 直观、个性化，根植于人类想象。
