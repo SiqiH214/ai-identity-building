@@ -100,28 +100,106 @@ export async function POST(request: NextRequest) {
       console.log(`📸 Using ${referenceImages.length} reference images for generation`)
     }
 
-    // Define 4 distinct style variations
-    const styleVariations = [
-      {
-        name: 'Instagram Realistic',
-        prompt: `${rewrittenPrompt}, shot on iPhone, Instagram aesthetic, natural lighting, candid moment, modern photography style, shallow depth of field, cinematic color grading, 8k quality, photorealistic`
-      },
-      {
-        name: 'Surreal Pinterest',
-        prompt: `${rewrittenPrompt}, surreal artistic edit, Pinterest aesthetic, dreamy atmosphere, soft pastel colors, ethereal lighting, artistic composition, creative digital art style, fantasy mood, painterly quality`
-      },
-      {
-        name: 'Anime Style',
-        prompt: `${rewrittenPrompt}, anime art style, Japanese animation aesthetic, vibrant colors, clean lines, Studio Ghibli inspired, beautiful anime character design, detailed anime illustration, high quality anime art`
-      },
-      {
-        name: 'Unreal Engine',
-        prompt: `${rewrittenPrompt}, Unreal Engine 5 render, hyperrealistic CGI, ray tracing, volumetric lighting, physically based rendering, ultra detailed 3D render, cinematic realism, next-gen graphics, photogrammetry quality`
-      }
-    ]
+    // Generate 4 images in a single API call using BytePlus
+    console.log('🎨 Generating 4 image variations with BytePlus in a single call...')
 
-    // Generate images in parallel
-    const generateImagePromise = async (variation: typeof styleVariations[0], index: number) => {
+    const errors: string[] = []
+    let images: string[] = []
+
+    try {
+      // BytePlus API call - generate 4 images at once
+      const requestBody = {
+        model: byteplusModel,
+        prompt: `${rewrittenPrompt}, professional photography, high quality, photorealistic, cinematic lighting`,
+        image: referenceImages, // Array of base64 data URLs
+        n: 4, // Generate 4 images in one call
+        response_format: 'b64_json', // Get base64 response
+        size: '1440x2560', // Portrait size
+        watermark: false,
+      }
+
+      console.log(`🔧 BytePlus request:`, {
+        model: requestBody.model,
+        promptLength: requestBody.prompt.length,
+        imageCount: requestBody.image.length,
+        numImages: requestBody.n,
+        size: requestBody.size,
+      })
+
+      const imageResponse = await fetch(`${byteplusBaseUrl}/images/generations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${byteplusApiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      if (imageResponse.ok) {
+        const imageData = await imageResponse.json()
+
+        console.log(`📦 BytePlus response:`, {
+          hasData: !!imageData.data,
+          dataLength: imageData.data?.length || 0,
+        })
+
+        // Check for image data in response
+        if (imageData.data && Array.isArray(imageData.data)) {
+          for (const item of imageData.data) {
+            if (item.b64_json) {
+              const base64Image = `data:image/jpeg;base64,${item.b64_json}`
+              images.push(base64Image)
+              console.log(`✅ Generated image ${images.length}/4`)
+            } else if (item.url) {
+              images.push(item.url)
+              console.log(`✅ Generated image ${images.length}/4 (URL format)`)
+            }
+          }
+        }
+
+        if (images.length === 0) {
+          const errorMsg = `No image data found in response: ${JSON.stringify(imageData).substring(0, 200)}`
+          console.error(`❌ BytePlus: ${errorMsg}`)
+          errors.push(errorMsg)
+        }
+      } else {
+        const errorText = await imageResponse.text()
+        const errorMsg = `API error (${imageResponse.status}): ${errorText.substring(0, 300)}`
+        console.error(`❌ BytePlus: ${errorMsg}`)
+        errors.push(errorMsg)
+      }
+    } catch (error) {
+      const errorMsg = `Exception: ${error instanceof Error ? error.message : String(error)}`
+      console.error(`❌ BytePlus: ${errorMsg}`)
+      errors.push(errorMsg)
+    }
+
+    // If the single-call approach failed, fall back to parallel generation with style variations
+    if (images.length === 0) {
+      console.log('⚠️  Single-call generation failed, trying parallel generation with style variations...')
+
+      // Define 4 distinct style variations
+      const styleVariations = [
+        {
+          name: 'Instagram Realistic',
+          prompt: `${rewrittenPrompt}, shot on iPhone, Instagram aesthetic, natural lighting, candid moment, modern photography style, shallow depth of field, cinematic color grading, 8k quality, photorealistic`
+        },
+        {
+          name: 'Surreal Pinterest',
+          prompt: `${rewrittenPrompt}, surreal artistic edit, Pinterest aesthetic, dreamy atmosphere, soft pastel colors, ethereal lighting, artistic composition, creative digital art style, fantasy mood, painterly quality`
+        },
+        {
+          name: 'Anime Style',
+          prompt: `${rewrittenPrompt}, anime art style, Japanese animation aesthetic, vibrant colors, clean lines, Studio Ghibli inspired, beautiful anime character design, detailed anime illustration, high quality anime art`
+        },
+        {
+          name: 'Unreal Engine',
+          prompt: `${rewrittenPrompt}, Unreal Engine 5 render, hyperrealistic CGI, ray tracing, volumetric lighting, physically based rendering, ultra detailed 3D render, cinematic realism, next-gen graphics, photogrammetry quality`
+        }
+      ]
+
+      // Generate images in parallel as fallback
+      const generateImagePromise = async (variation: typeof styleVariations[0], index: number) => {
       try {
         console.log(`🎨 Generating ${variation.name} (${index + 1}/4) with BytePlus...`)
 
@@ -182,21 +260,22 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Generate all 4 images in parallel
-    const results = await Promise.all(
-      styleVariations.map((variation, index) => generateImagePromise(variation, index))
-    )
+      // Generate all 4 images in parallel as fallback
+      const results = await Promise.all(
+        styleVariations.map((variation, index) => generateImagePromise(variation, index))
+      )
 
-    // Collect successful images and errors
-    const images = results
-      .filter(result => result.success)
-      .map(result => result.image as string)
+      // Collect successful images and errors
+      images = results
+        .filter(result => result.success)
+        .map(result => result.image as string)
 
-    results.forEach((result, index) => {
-      if (!result.success) {
-        errors.push(`${result.style}: ${result.error}`)
-      }
-    })
+      results.forEach((result, index) => {
+        if (!result.success) {
+          errors.push(`${result.style}: ${result.error}`)
+        }
+      })
+    }
 
     // If no images were generated successfully, return error info
     if (images.length === 0) {
