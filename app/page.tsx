@@ -4,7 +4,7 @@ import { useState } from 'react'
 import IdentitySection from '@/components/IdentitySection'
 import CreationSection from '@/components/CreationSection'
 import ResultsSection from '@/components/ResultsSection'
-import { generateImages } from '@/lib/api'
+import { generateImages, generateImagesByteplus } from '@/lib/api'
 import type { Avatar } from '@/lib/avatars'
 
 export interface SelectedElement {
@@ -23,6 +23,7 @@ export default function Home() {
   const [hasGenerated, setHasGenerated] = useState(false)
   const [lastPrompt, setLastPrompt] = useState<string>('')
   const [selectedElements, setSelectedElements] = useState<SelectedElement[]>([])
+  const [useByteplus, setUseByteplus] = useState(false) // Toggle for testing BytePlus
 
   const handleGenerate = async (prompt: string, location?: string) => {
     if (!identityImage) {
@@ -87,7 +88,11 @@ export default function Home() {
     }
 
     try {
-      const result = await generateImages({
+      // Choose API based on toggle
+      const apiFunction = useByteplus ? generateImagesByteplus : generateImages
+      console.log(`🔧 Using ${useByteplus ? 'BytePlus Seedream' : 'Gemini'} for generation`)
+
+      const result = await apiFunction({
         selfie: identityImage,
         prompt,
         location,
@@ -135,6 +140,16 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center py-safe">
       <div className="w-full max-w-md mx-auto min-h-screen flex flex-col py-4 gap-4">
+        {/* API Provider Toggle - Top Right */}
+        <div className="absolute top-4 right-4 z-50">
+          <button
+            onClick={() => setUseByteplus(!useByteplus)}
+            className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium shadow-lg hover:bg-white/20 transition-all"
+          >
+            {useByteplus ? '🚀 BytePlus' : '🤖 Gemini'}
+          </button>
+        </div>
+
         {/* Identity/Results image area */}
         <div className="flex-1 min-h-0 flex items-center justify-center px-6">
           {generatedImages.length > 0 && !isGenerating ? (

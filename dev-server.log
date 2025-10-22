@@ -679,3 +679,4 @@ Import trace for requested module:
  ✓ Compiled in 237ms (1318 modules)
 <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/1.pack.gz_' -> '/Users/siqihe/siqi-vibe/ai-identity building/.next/cache/webpack/client-development/1.pack.gz'
  GET / 200 in 178ms
+   Reload env: .env.local

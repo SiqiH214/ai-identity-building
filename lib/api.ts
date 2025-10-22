@@ -22,7 +22,7 @@ export interface GenerateImageResponse {
 }
 
 /**
- * Call image generation API
+ * Call image generation API (Gemini)
  */
 export async function generateImages(
   params: GenerateImageParams
@@ -50,6 +50,39 @@ export async function generateImages(
     return data
   } catch (error) {
     console.error('API call failed:', error)
+    throw error
+  }
+}
+
+/**
+ * Call BytePlus Seedream image generation API
+ */
+export async function generateImagesByteplus(
+  params: GenerateImageParams
+): Promise<GenerateImageResponse> {
+  try {
+    const response = await fetch('/api/generate-byteplus', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      // Create an Error object containing all error information
+      const error: any = new Error(data.error || 'BytePlus generation failed')
+      error.details = data.details
+      error.suggestion = data.suggestion
+      error.model = data.model
+      throw error
+    }
+
+    return data
+  } catch (error) {
+    console.error('BytePlus API call failed:', error)
     throw error
   }
 }
