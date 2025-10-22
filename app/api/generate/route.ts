@@ -105,9 +105,9 @@ Provide a comprehensive 3-4 sentence description that captures all these element
     const rewriteParts: any[] = []
 
     if (hasMultipleCharacters) {
-      // Multi-character: add descriptive text BEFORE each image
+      // Multi-character: Add comprehensive instruction first
       rewriteParts.push({
-        text: `Reference image for subject A:`
+        text: `You will be shown multiple reference images. Each image represents a different person. Pay close attention to each person's unique facial features, expressions, and appearance.\n\nReference image for SUBJECT A (primary person):`
       })
       rewriteParts.push({
         inline_data: {
@@ -117,8 +117,9 @@ Provide a comprehensive 3-4 sentence description that captures all these element
       })
 
       coCreateImages.forEach((img: string, idx: number) => {
+        const subjectLabel = String.fromCharCode(66 + idx) // B, C, D...
         rewriteParts.push({
-          text: `Reference image for subject ${String.fromCharCode(66 + idx)}:` // B, C, D...
+          text: `\nReference image for SUBJECT ${subjectLabel} (additional person ${idx + 1}):`
         })
         rewriteParts.push({
           inline_data: {
@@ -261,9 +262,13 @@ Now rewrite the user's intent into a single, detailed professional prompt:`
         const generateParts: any[] = []
 
         if (hasMultipleCharacters) {
-          // Multi-character: add descriptive text BEFORE each image
+          // Multi-character: Add comprehensive instruction with all images
           generateParts.push({
-            text: `Reference image for subject A:`
+            text: `MULTI-PERSON IMAGE GENERATION TASK
+
+You must generate an image containing ALL the people shown in the reference images below. Each person must maintain their exact facial features, expressions, and appearance from their reference image.
+
+Reference image for SUBJECT A (primary person):`
           })
           generateParts.push({
             inline_data: {
@@ -273,8 +278,9 @@ Now rewrite the user's intent into a single, detailed professional prompt:`
           })
 
           coCreateImages.forEach((img: string, idx: number) => {
+            const subjectLabel = String.fromCharCode(66 + idx) // B, C, D...
             generateParts.push({
-              text: `Reference image for subject ${String.fromCharCode(66 + idx)}:` // B, C, D...
+              text: `\nReference image for SUBJECT ${subjectLabel} (additional person ${idx + 1}):`
             })
             generateParts.push({
               inline_data: {
@@ -284,9 +290,13 @@ Now rewrite the user's intent into a single, detailed professional prompt:`
             })
           })
 
-          // Add the generation prompt at the end
+          // Add the generation prompt at the end with emphasis
           generateParts.push({
-            text: `\n\nGeneration prompt: ${variation.prompt}`
+            text: `\n\nIMPORTANT: The generated image MUST include ALL ${coCreateImages.length + 1} people shown above (SUBJECT A through SUBJECT ${String.fromCharCode(65 + coCreateImages.length)}). Each person must maintain their exact facial identity from their reference image.
+
+Generation prompt: ${variation.prompt}
+
+Ensure all ${coCreateImages.length + 1} subjects are clearly visible and maintain their individual identities in the final image.`
           })
         } else {
           // Single character: original structure
