@@ -384,7 +384,12 @@ export default function IdentitySection({
             </AnimatePresence>
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-white/60">
+          <motion.button
+            onClick={() => fileInputRef.current?.click()}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full h-full flex flex-col items-center justify-center text-white/60 cursor-pointer transition-all"
+          >
             <div className="relative">
               <motion.div
                 animate={{
@@ -403,9 +408,24 @@ export default function IdentitySection({
               />
               <User className="w-24 h-24 mb-4 relative z-10" />
             </div>
-            <p className="text-lg font-medium">No photo yet</p>
-            <p className="text-sm text-white/40 mt-2">Upload to get started</p>
-          </div>
+            <p className="text-lg font-medium text-white">No photo yet</p>
+            <p className="text-sm text-white/40 mt-2">Tap to upload your identity</p>
+
+            {/* Upload button */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mt-6 px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-lg"
+              style={{
+                boxShadow: '0 8px 24px rgba(168, 85, 247, 0.4)',
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <Upload className="w-5 h-5" />
+                <span>Upload Photo</span>
+              </div>
+            </motion.div>
+          </motion.button>
         )}
       </motion.div>
 
