@@ -33,3 +33,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# development logs
+dev-server.log
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
