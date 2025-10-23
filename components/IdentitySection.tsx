@@ -298,7 +298,7 @@ export default function IdentitySection({
               }}
             >
               <img
-                src={identityImage}
+                src={identityImage || ''}
                 alt="Your identity"
                 className="w-full h-full object-cover"
               />
@@ -492,7 +492,7 @@ export default function IdentitySection({
               }}
             >
               <img
-                src={identityImage}
+                src={identityImage || ''}
                 alt="Your identity"
                 className="w-full h-full object-cover"
               />
