@@ -71,7 +71,7 @@ export default function LocationPanel({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-xl z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-2xl z-[9998]"
           />
 
           {/* Bottom Sheet Panel */}
@@ -80,7 +80,7 @@ export default function LocationPanel({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 glass-card rounded-t-[2rem] z-50 overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 rounded-t-[2rem] z-[9999] overflow-hidden backdrop-blur-3xl bg-black/70 border-t border-white/10"
             style={{ maxHeight: '65vh' }}
           >
             <div className="flex flex-col h-full">
@@ -115,7 +115,7 @@ export default function LocationPanel({
               </div>
 
               {/* Location grid - 3 columns */}
-              <div className="flex-1 overflow-y-auto px-4 pb-safe">
+              <div className="flex-1 overflow-y-auto px-4 pb-safe overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
                 <div className="grid grid-cols-3 gap-3 pb-4">
                   {/* Upload Custom Location Button */}
                   {onAddCustomLocation && (
@@ -183,14 +183,14 @@ export default function LocationPanel({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setShowUploadDialog(false)}
-                  className="fixed inset-0 bg-black/90 backdrop-blur-2xl z-[60]"
+                  className="fixed inset-0 bg-black/90 backdrop-blur-2xl z-[110]"
                 />
 
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="fixed inset-0 flex items-center justify-center z-[61] p-4 pointer-events-none"
+                  className="fixed inset-0 flex items-center justify-center z-[111] p-4 pointer-events-none"
                 >
                   <motion.div
                     onClick={(e) => e.stopPropagation()}

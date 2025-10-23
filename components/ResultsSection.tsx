@@ -117,7 +117,7 @@ export default function ResultsSection({
         )}
 
         {/* Pagination dots - bottom center */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
           {images.map((_, idx) => (
             <button
               key={idx}
@@ -130,15 +130,6 @@ export default function ResultsSection({
             />
           ))}
         </div>
-
-        {/* Regenerate button - bottom center */}
-        <button
-          onClick={() => onRegenerate('')}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 ios-button-primary px-6 py-3 text-sm flex items-center gap-2 z-10"
-        >
-          <RotateCw className="w-4 h-4" />
-          Regenerate
-        </button>
       </motion.div>
 
       {/* Edit toolbar - removed as it was taking too much space */}

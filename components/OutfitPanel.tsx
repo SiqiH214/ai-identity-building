@@ -33,7 +33,7 @@ export default function OutfitPanel({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-xl z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-2xl z-[9998]"
           />
 
           {/* Bottom Sheet Panel */}
@@ -42,7 +42,7 @@ export default function OutfitPanel({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 glass-card rounded-t-[2rem] z-50 overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 rounded-t-[2rem] z-[9999] overflow-hidden backdrop-blur-3xl bg-black/70 border-t border-white/10"
             style={{ maxHeight: '70vh' }}
           >
             <div className="flex flex-col h-full">
@@ -77,7 +77,7 @@ export default function OutfitPanel({
               </div>
 
               {/* Outfit grid - 2 columns */}
-              <div className="flex-1 overflow-y-auto px-4 pb-safe">
+              <div className="flex-1 overflow-y-auto px-4 pb-safe overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
                 <div className="grid grid-cols-2 gap-3 pb-4">
                   {filteredOutfits.map((outfit, idx) => (
                     <motion.button

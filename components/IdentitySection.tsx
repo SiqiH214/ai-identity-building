@@ -143,23 +143,182 @@ export default function IdentitySection({
         }}
       >
         {isGenerating ? (
-          <div className="w-full h-full flex flex-col items-center justify-center text-white">
+          <div className="w-full h-full flex items-center justify-center p-8">
+            {/* Gradient glow background - pulsing during generation */}
             <motion.div
               animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360],
+                scale: [1, 1.1, 1],
+                opacity: [0.5, 0.9, 0.5],
               }}
               transition={{
                 duration: 2,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="w-20 h-20 mb-6"
+              className="absolute inset-0 flex items-center justify-center"
             >
-              <div className="w-full h-full border-4 border-white/20 border-t-white rounded-full"></div>
+              <div
+                className="w-[280px] h-[280px] rounded-full blur-[80px]"
+                style={{
+                  background: 'radial-gradient(circle, rgba(168, 85, 247, 0.5) 0%, rgba(59, 130, 246, 0.4) 50%, rgba(251, 146, 60, 0.4) 100%)',
+                }}
+              />
             </motion.div>
-            <p className="text-lg font-semibold mb-2">Generating images...</p>
-            <p className="text-sm text-white/60">This may take a moment</p>
+
+            {/* Rotating bubbles around the main identity */}
+            {selectedElements.filter(element => {
+              // Filter out the user's own identity from bubbles
+              if (element.type === 'avatar' || element.type === 'identity') {
+                if (element.data && 'username' in element.data) {
+                  const username = element.data.username.replace('@', '').toLowerCase()
+                  return username !== identityName.toLowerCase()
+                }
+              }
+              return true
+            }).map((element, i) => {
+              const angle = (i * 360) / selectedElements.filter(element => {
+                if (element.type === 'avatar' || element.type === 'identity') {
+                  if (element.data && 'username' in element.data) {
+                    const username = element.data.username.replace('@', '').toLowerCase()
+                    return username !== identityName.toLowerCase()
+                  }
+                }
+                return true
+              }).length
+              const radius = 140
+
+              return (
+                <motion.div
+                  key={element.id}
+                  className="absolute rounded-full backdrop-blur-md border border-white/30 overflow-hidden"
+                  style={{
+                    width: 70,
+                    height: 70,
+                    filter: 'blur(2px)',
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1)',
+                  }}
+                  animate={{
+                    x: [
+                      Math.cos((angle * Math.PI) / 180) * radius,
+                      Math.cos(((angle + 360) * Math.PI) / 180) * radius,
+                    ],
+                    y: [
+                      Math.sin((angle * Math.PI) / 180) * radius,
+                      Math.sin(((angle + 360) * Math.PI) / 180) * radius,
+                    ],
+                    opacity: [0.6, 0.9, 0.6],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                >
+                  {element.type === 'avatar' && element.data && 'image' in element.data ? (
+                    <img
+                      src={element.data.image}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  ) : element.type === 'location' ? (
+                    element.data && 'image' in element.data ? (
+                      <img
+                        src={element.data.image}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
+                        <MapPin className="w-8 h-8 text-white/70" />
+                      </div>
+                    )
+                  ) : element.type === 'outfit' ? (
+                    element.data && 'image' in element.data ? (
+                      <img
+                        src={element.data.image}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
+                        <Sparkles className="w-8 h-8 text-white/70" />
+                      </div>
+                    )
+                  ) : null}
+                </motion.div>
+              )
+            })}
+
+            {/* Decorative floating bubbles in background - same as initial state */}
+            {[...Array(6)].map((_, i) => (
+              <motion.div
+                key={`bubble-${i}`}
+                className="absolute rounded-full"
+                style={{
+                  width: 60 + Math.random() * 40,
+                  height: 60 + Math.random() * 40,
+                  left: `${10 + Math.random() * 80}%`,
+                  top: `${10 + Math.random() * 80}%`,
+                  background: `radial-gradient(circle, ${
+                    ['rgba(168, 85, 247, 0.1)', 'rgba(59, 130, 246, 0.1)', 'rgba(251, 146, 60, 0.1)'][
+                      i % 3
+                    ]
+                  } 0%, transparent 70%)`,
+                  opacity: 0.4,
+                }}
+                animate={{
+                  y: [0, -15, 0, 15, 0],
+                  x: [0, 10, 0, -10, 0],
+                  scale: [1, 1.15, 1, 0.95, 1],
+                  opacity: [0.7, 1, 0.7, 1, 0.7],
+                }}
+                transition={{
+                  duration: 4 + i * 0.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: i * 0.2,
+                }}
+              />
+            ))}
+
+            {/* Identity image in center - slightly blurred during generation */}
+            <motion.div
+              animate={{
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative z-0 w-56 h-56 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
+              style={{
+                filter: 'blur(1px)',
+                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <img
+                src={identityImage}
+                alt="Your identity"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+
+            {/* Loading text overlay - centered on the canvas */}
+            <motion.div
+              animate={{
+                opacity: [0.7, 1, 0.7],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
+            >
+              <p className="text-lg font-semibold text-white mb-1">Generating images...</p>
+              <p className="text-sm text-white/60">This may take a moment</p>
+            </motion.div>
           </div>
         ) : identityImage ? (
           <div className="w-full h-full flex items-center justify-center p-8">
@@ -327,7 +486,7 @@ export default function IdentitySection({
               transition={{
                 scale: { duration: 0.4, ease: "easeOut" }
               }}
-              className="relative z-10 w-56 h-56 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
+              className="relative z-0 w-56 h-56 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
               style={{
                 boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.1)',
               }}
