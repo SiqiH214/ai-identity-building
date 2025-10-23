@@ -42,14 +42,15 @@ export default function Home() {
     const coCreateImages: string[] = []
     const processedNames = new Set<string>()
 
-    mentions.forEach(mentionName => {
-      if (processedNames.has(mentionName)) return
+    // Use async forEach to convert images to base64
+    for (const mentionName of mentions) {
+      if (processedNames.has(mentionName)) continue
       processedNames.add(mentionName)
 
       // Check if it's the user's identity
       if (mentionName === identityName.toLowerCase()) {
         // User's own identity - already the main selfie, skip
-        return
+        continue
       }
 
       // Find in selected elements
@@ -59,9 +60,22 @@ export default function Home() {
       )
 
       if (element && element.data && 'image' in element.data && element.data.image) {
-        coCreateImages.push(element.data.image)
+        try {
+          // Convert avatar image path to base64
+          const response = await fetch(element.data.image)
+          const blob = await response.blob()
+          const base64Image = await new Promise<string>((resolve) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.readAsDataURL(blob)
+          })
+          coCreateImages.push(base64Image)
+          console.log(`✅ Loaded avatar: ${mentionName}`)
+        } catch (error) {
+          console.error(`❌ Failed to load avatar for @${mentionName}:`, error)
+        }
       }
-    })
+    }
 
     console.log('📝 Mentions found:', mentions)
     console.log('🖼️ Co-create images collected:', coCreateImages.length)

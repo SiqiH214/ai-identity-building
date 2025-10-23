@@ -89,31 +89,17 @@ export async function POST(request: NextRequest) {
     // Step 2: Generate 4 images using BytePlus Seedream in ONE call
     console.log('🖼️  Generating 4 images with BytePlus Seedream in a single API call...')
 
-    // Prepare reference images array
-    let referenceImages: string[] = [selfie]
+    // Prepare reference images array - BytePlus accepts base64 data URLs
+    const referenceImages: string[] = [selfie]
 
     // Add co-create images if available
     if (hasMultipleCharacters) {
       referenceImages.push(...coCreateImages)
       console.log(`📸 Using ${referenceImages.length} reference images for multi-character generation`)
-
-      // BytePlus requires HTTP URLs for multiple images
-      // Upload all base64 images to Vercel Blob
-      try {
-        const { uploadBase64Images } = await import('@/lib/upload')
-        const httpUrls = await uploadBase64Images(referenceImages)
-        referenceImages = httpUrls
-        console.log(`✅ Uploaded ${httpUrls.length} images to Vercel Blob for BytePlus`)
-      } catch (error) {
-        console.error('❌ Failed to upload images to Vercel Blob:', error)
-        return NextResponse.json({
-          error: 'Multi-character generation requires Vercel Blob',
-          details: 'Please configure BLOB_READ_WRITE_TOKEN in your environment variables',
-        }, { status: 500 })
-      }
     }
 
-    // BytePlus accepts base64 data URLs for single image, HTTP URLs for multiple
+    // BytePlus accepts base64 data URLs in format: data:{mime};base64,{b64}
+    // Keep images as-is (they're already in correct format)
     console.log(`🔧 Using ${referenceImages.length} reference image(s) for BytePlus API`)
 
     // Generate 4 variations - BytePlus doesn't reliably support n parameter,
