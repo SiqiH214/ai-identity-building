@@ -90,34 +90,48 @@ export async function POST(request: NextRequest) {
     console.log('🖼️  Generating 4 images with BytePlus Seedream in a single API call...')
 
     // Prepare reference images array
-    const referenceImages: string[] = [selfie]
+    let referenceImages: string[] = [selfie]
 
     // Add co-create images if available
     if (hasMultipleCharacters) {
       referenceImages.push(...coCreateImages)
       console.log(`📸 Using ${referenceImages.length} reference images for multi-character generation`)
+
+      // BytePlus requires HTTP URLs for multiple images
+      // Upload all base64 images to Vercel Blob
+      try {
+        const { uploadBase64Images } = await import('@/lib/upload')
+        const httpUrls = await uploadBase64Images(referenceImages)
+        referenceImages = httpUrls
+        console.log(`✅ Uploaded ${httpUrls.length} images to Vercel Blob for BytePlus`)
+      } catch (error) {
+        console.error('❌ Failed to upload images to Vercel Blob:', error)
+        return NextResponse.json({
+          error: 'Multi-character generation requires Vercel Blob',
+          details: 'Please configure BLOB_READ_WRITE_TOKEN in your environment variables',
+        }, { status: 500 })
+      }
     }
 
-    // Single API call to generate 4 variations
-    const requestBody: any = {
-      model: byteplusModel,
-      prompt: `${rewrittenPrompt}, professional photography, high quality, photorealistic, cinematic lighting`,
-      image: referenceImages, // Array of base64 data URLs
-      n: 4, // Generate 4 variations
-      response_format: 'b64_json', // Get base64 response
-      size: '1440x2560', // Portrait size
-      watermark: false,
-    }
+    // BytePlus accepts base64 data URLs for single image, HTTP URLs for multiple
+    console.log(`🔧 Using ${referenceImages.length} reference image(s) for BytePlus API`)
 
-    console.log(`🔧 BytePlus API request:`, {
-      model: requestBody.model,
-      promptLength: requestBody.prompt.length,
-      referenceImageCount: requestBody.image.length,
-      numVariations: requestBody.n,
-      size: requestBody.size,
-    })
+    // Generate 4 variations - BytePlus doesn't reliably support n parameter,
+    // so we make 4 parallel API calls (like Gemini)
+    console.log('🖼️  Generating 4 variations in parallel with BytePlus...')
 
-    try {
+    const generateVariation = async (variationNum: number) => {
+      const requestBody = {
+        model: byteplusModel,
+        prompt: `${rewrittenPrompt}, professional photography, high quality, photorealistic, cinematic lighting`,
+        image: referenceImages, // Array of base64 data URLs
+        response_format: 'b64_json', // Get base64 response
+        size: '1440x2560', // Portrait size
+        watermark: false,
+      }
+
+      console.log(`🎨 Generating variation ${variationNum}/4...`)
+
       const imageResponse = await fetch(`${byteplusBaseUrl}/images/generations`, {
         method: 'POST',
         headers: {
@@ -130,59 +144,59 @@ export async function POST(request: NextRequest) {
       const responseText = await imageResponse.text()
 
       if (!imageResponse.ok) {
-        console.error(`❌ BytePlus API error (${imageResponse.status}):`, responseText.substring(0, 500))
-        console.log('📋 Full error:', responseText)
-
-        return NextResponse.json({
-          error: 'BytePlus image generation failed',
-          details: `API error (${imageResponse.status}): ${responseText.substring(0, 300)}`,
-          model: byteplusModel,
-          suggestion: 'BytePlus API rejected the request. Check terminal logs for details.'
-        }, { status: 500 })
+        throw new Error(`API error (${imageResponse.status}): ${responseText.substring(0, 300)}`)
       }
 
       const imageData = JSON.parse(responseText)
 
-      console.log(`📦 BytePlus response:`, {
-        hasData: !!imageData.data,
-        dataLength: imageData.data?.length || 0,
-      })
-
-      // Check for image data in response
-      const images: string[] = []
-
-      if (imageData.data && Array.isArray(imageData.data)) {
-        for (const item of imageData.data) {
-          if (item.b64_json) {
-            const base64Image = `data:image/jpeg;base64,${item.b64_json}`
-            images.push(base64Image)
-            console.log(`✅ Generated image ${images.length}/${requestBody.n}`)
-          } else if (item.url) {
-            images.push(item.url)
-            console.log(`✅ Generated image ${images.length}/${requestBody.n} (URL format)`)
-          }
-        }
+      if (imageData.data?.[0]?.b64_json) {
+        const base64Image = `data:image/jpeg;base64,${imageData.data[0].b64_json}`
+        console.log(`✅ Variation ${variationNum}/4 generated`)
+        return base64Image
+      } else if (imageData.data?.[0]?.url) {
+        console.log(`✅ Variation ${variationNum}/4 generated (URL)`)
+        return imageData.data[0].url
       }
 
-      if (images.length === 0) {
-        const errorMsg = `No image data found in BytePlus response`
-        console.error(`❌ ${errorMsg}`)
-        console.log('📋 Response data:', JSON.stringify(imageData).substring(0, 500))
+      throw new Error('No image data in response')
+    }
 
+    try {
+      // Generate 4 variations in parallel
+      const results = await Promise.allSettled([
+        generateVariation(1),
+        generateVariation(2),
+        generateVariation(3),
+        generateVariation(4),
+      ])
+
+      const images: string[] = []
+      const errors: string[] = []
+
+      results.forEach((result, i) => {
+        if (result.status === 'fulfilled') {
+          images.push(result.value)
+        } else {
+          console.error(`❌ Variation ${i + 1} failed:`, result.reason)
+          errors.push(`Variation ${i + 1}: ${result.reason}`)
+        }
+      })
+
+      if (images.length === 0) {
         return NextResponse.json({
-          error: 'BytePlus returned no images',
-          details: errorMsg,
+          error: 'All BytePlus image generations failed',
+          details: errors,
           model: byteplusModel,
-          suggestion: 'BytePlus API call succeeded but returned no image data. Check terminal logs.'
+          suggestion: 'Check terminal logs for detailed errors'
         }, { status: 500 })
       }
 
-      console.log(`✨ Successfully generated ${images.length} images with BytePlus!`)
-
-      // Ensure we have 4 images (duplicate if needed)
+      // Ensure we have 4 images (duplicate if some failed)
       while (images.length < 4) {
         images.push(images[0])
       }
+
+      console.log(`✨ Successfully generated ${images.length} images with BytePlus!`)
 
       return NextResponse.json({
         images: images.slice(0, 4),
@@ -190,7 +204,7 @@ export async function POST(request: NextRequest) {
         generated: true,
         provider: 'BytePlus Seedream',
         model: byteplusModel,
-        note: `Successfully generated ${images.length} images using BytePlus Seedream ${byteplusModel} with ${referenceImages.length} reference image(s)`
+        note: `Successfully generated ${images.length}/4 images using BytePlus Seedream ${byteplusModel} with ${referenceImages.length} reference image(s)`
       })
 
     } catch (error) {
