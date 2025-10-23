@@ -5,6 +5,12 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'z-[9998]',
+    'z-[9999]',
+    'z-[110]',
+    'z-[111]',
+  ],
   theme: {
     extend: {
       colors: {
