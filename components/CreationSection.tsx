@@ -643,7 +643,7 @@ export default function CreationSection({
                     className="w-full h-full object-cover"
                   />
                 </button>
-                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{location.name}</p>
+                <p className="text-[10px] text-gray-600 text-center w-20 line-clamp-1">{location.name}</p>
               </div>
             ))}
             {selectedCity !== 'Home' && (
@@ -652,9 +652,9 @@ export default function CreationSection({
                   onClick={() => setShowLocationPanel(true)}
                   className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-gray-400 hover:border-white/50 bg-gray-100 flex items-center justify-center transition-all"
                 >
-                  <Upload className="w-6 h-6 text-white/50" />
+                  <Upload className="w-6 h-6 text-gray-500" />
                 </button>
-                <p className="text-[10px] text-white/60 text-center w-20">More</p>
+                <p className="text-[10px] text-gray-600 text-center w-20">More</p>
               </div>
             )}
           </div>
@@ -681,7 +681,7 @@ export default function CreationSection({
                     className="w-full h-full object-cover"
                   />
                 </button>
-                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{outfit.name}</p>
+                <p className="text-[10px] text-gray-600 text-center w-20 line-clamp-1">{outfit.name}</p>
               </div>
             ))}
             <div className="flex flex-col items-center gap-1">
@@ -689,9 +689,9 @@ export default function CreationSection({
                 onClick={() => setShowOutfitPanel(true)}
                 className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-gray-400 hover:border-white/50 bg-gray-100 flex items-center justify-center transition-all"
               >
-                <Upload className="w-6 h-6 text-white/50" />
+                <Upload className="w-6 h-6 text-gray-500" />
               </button>
-              <p className="text-[10px] text-white/60 text-center w-20">More</p>
+              <p className="text-[10px] text-gray-600 text-center w-20">More</p>
             </div>
           </div>
         )
@@ -717,7 +717,7 @@ export default function CreationSection({
                       className="w-full h-full object-cover"
                     />
                   </button>
-                  <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{avatar.name}</p>
+                  <p className="text-[10px] text-gray-600 text-center w-20 line-clamp-1">{avatar.name}</p>
                 </div>
               )
             })}
@@ -735,7 +735,7 @@ export default function CreationSection({
                 >
                   {emotion.emoji}
                 </button>
-                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{emotion.name}</p>
+                <p className="text-[10px] text-gray-600 text-center w-20 line-clamp-1">{emotion.name}</p>
               </div>
             ))}
           </div>
@@ -752,7 +752,7 @@ export default function CreationSection({
                 >
                   {activity.emoji}
                 </button>
-                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{activity.name}</p>
+                <p className="text-[10px] text-gray-600 text-center w-20 line-clamp-1">{activity.name}</p>
               </div>
             ))}
           </div>
@@ -774,7 +774,7 @@ export default function CreationSection({
                     className="w-full h-full object-cover"
                   />
                 </button>
-                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{pose.name}</p>
+                <p className="text-[10px] text-gray-600 text-center w-20 line-clamp-1">{pose.name}</p>
               </div>
             ))}
           </div>
@@ -883,7 +883,7 @@ export default function CreationSection({
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-200/50 transition-all"
                     >
                       <div className="w-10 h-10 rounded-full bg-gray-200/50 flex items-center justify-center border-2 border-dashed border-gray-400">
-                        <Upload className="w-5 h-5 text-white/60" />
+                        <Upload className="w-5 h-5 text-gray-600" />
                       </div>
                       <span className="text-gray-900 font-medium">Add New Identity</span>
                     </button>
@@ -915,7 +915,7 @@ export default function CreationSection({
                           <div className="flex-1 text-left">
                             <div className="text-gray-900 font-medium text-sm">{identity.name}</div>
                             {identity.isPrimary && (
-                              <div className="text-white/40 text-xs">Primary</div>
+                              <div className="text-gray-400 text-xs">Primary</div>
                             )}
                           </div>
                         </button>
@@ -929,7 +929,7 @@ export default function CreationSection({
                               className="p-1 hover:bg-gray-200/50 rounded-lg"
                               title="Set as primary"
                             >
-                              <Star className="w-4 h-4 text-white/60" />
+                              <Star className="w-4 h-4 text-gray-600" />
                             </button>
                           )}
                           <button
@@ -959,7 +959,7 @@ export default function CreationSection({
             value={prompt}
             onChange={(e) => handlePromptChange(e.target.value)}
             placeholder="Describe a Genmoji"
-            className="ios-input w-full h-14 px-4 py-3 pr-14 text-gray-900 resize-none placeholder:text-white/40 text-sm rounded-2xl"
+            className="ios-input w-full h-14 px-4 py-3 pr-14 text-gray-900 resize-none placeholder:text-gray-400 text-sm rounded-2xl"
             disabled={isGenerating}
             rows={1}
           />

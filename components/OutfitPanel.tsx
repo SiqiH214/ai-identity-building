@@ -59,19 +59,19 @@ export default function OutfitPanel({
                     onClick={onClose}
                     className="p-2 rounded-full hover:bg-gray-200/50 transition-colors"
                   >
-                    <X className="w-5 h-5 text-white/70" />
+                    <X className="w-5 h-5 text-gray-700" />
                   </button>
                 </div>
 
                 {/* Search box */}
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search outfits..."
-                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
+                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
               </div>
@@ -106,7 +106,7 @@ export default function OutfitPanel({
                         <p className="text-gray-900 font-bold text-sm leading-tight drop-shadow-lg">
                           {outfit.name}
                         </p>
-                        <p className="text-white/70 text-xs mt-1">
+                        <p className="text-gray-700 text-xs mt-1">
                           {outfit.category}
                         </p>
                       </div>

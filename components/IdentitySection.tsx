@@ -292,7 +292,7 @@ export default function IdentitySection({
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-green-500/30 to-blue-500/30 flex items-center justify-center">
-                        <Camera className="w-8 h-8 text-white/70" />
+                        <Camera className="w-8 h-8 text-gray-700" />
                       </div>
                     )
                   ) : null}
@@ -368,7 +368,7 @@ export default function IdentitySection({
               className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
             >
               <p className="text-lg font-semibold text-gray-900 mb-1">Generating images...</p>
-              <p className="text-sm text-white/60">This may take a moment</p>
+              <p className="text-sm text-gray-600">This may take a moment</p>
             </motion.div>
           </div>
         ) : identityImage ? (
@@ -506,7 +506,7 @@ export default function IdentitySection({
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-green-500/30 to-blue-500/30 flex items-center justify-center">
-                          <Camera className="w-8 h-8 text-white/70" />
+                          <Camera className="w-8 h-8 text-gray-700" />
                         </div>
                       )
                     ) : null}
@@ -626,7 +626,7 @@ export default function IdentitySection({
             onClick={() => fileInputRef.current?.click()}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full h-full flex flex-col items-center justify-center text-white/60 cursor-pointer transition-all"
+            className="w-full h-full flex flex-col items-center justify-center text-gray-600 cursor-pointer transition-all"
           >
             <div className="relative">
               <motion.div
@@ -647,7 +647,7 @@ export default function IdentitySection({
               <User className="w-24 h-24 mb-4 relative z-10" />
             </div>
             <p className="text-lg font-medium text-gray-900">No photo yet</p>
-            <p className="text-sm text-white/40 mt-2">Tap to upload your identity</p>
+            <p className="text-sm text-gray-400 mt-2">Tap to upload your identity</p>
 
             {/* Upload button */}
             <motion.div

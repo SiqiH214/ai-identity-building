@@ -97,19 +97,19 @@ export default function LocationPanel({
                     onClick={onClose}
                     className="p-2 rounded-full hover:bg-gray-200/50 transition-colors"
                   >
-                    <X className="w-5 h-5 text-white/70" />
+                    <X className="w-5 h-5 text-gray-700" />
                   </button>
                 </div>
 
                 {/* Search box */}
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search location..."
-                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
+                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400"
                   />
                 </div>
               </div>
@@ -126,8 +126,8 @@ export default function LocationPanel({
                       className="group relative aspect-square rounded-xl overflow-hidden active:scale-95 transition-transform duration-200 bg-gray-200/50 backdrop-blur-sm border-2 border-dashed border-gray-400 hover:border-white/50 flex items-center justify-center"
                     >
                       <div className="flex flex-col items-center gap-2">
-                        <Plus className="w-6 h-6 text-white/70" />
-                        <p className="text-white/70 text-[10px] font-medium">Upload</p>
+                        <Plus className="w-6 h-6 text-gray-700" />
+                        <p className="text-gray-700 text-[10px] font-medium">Upload</p>
                       </div>
                     </motion.button>
                   )}
@@ -159,7 +159,7 @@ export default function LocationPanel({
                         <p className="text-gray-900 font-semibold text-xs leading-tight drop-shadow-lg line-clamp-2">
                           {location.name}
                         </p>
-                        <p className="text-white/60 text-[10px] mt-0.5 line-clamp-1">
+                        <p className="text-gray-600 text-[10px] mt-0.5 line-clamp-1">
                           {location.city}
                         </p>
                       </div>
@@ -202,7 +202,7 @@ export default function LocationPanel({
                       onClick={() => setShowUploadDialog(false)}
                       className="p-1 rounded-full hover:bg-gray-200/50 transition-colors"
                     >
-                      <X className="w-5 h-5 text-white/70" />
+                      <X className="w-5 h-5 text-gray-700" />
                     </button>
                   </div>
 
@@ -227,8 +227,8 @@ export default function LocationPanel({
                         onClick={() => fileInputRef.current?.click()}
                         className="w-full aspect-video rounded-xl border-2 border-dashed border-gray-400 hover:border-white/50 bg-gray-100 flex flex-col items-center justify-center gap-2 transition-colors"
                       >
-                        <Upload className="w-8 h-8 text-white/50" />
-                        <p className="text-white/50 text-sm">Upload Image</p>
+                        <Upload className="w-8 h-8 text-gray-500" />
+                        <p className="text-gray-500 text-sm">Upload Image</p>
                       </button>
                     )}
                     <input
@@ -242,25 +242,25 @@ export default function LocationPanel({
 
                   {/* Name Input */}
                   <div className="mb-3">
-                    <label className="block text-white/70 text-sm mb-1.5">Location Name</label>
+                    <label className="block text-gray-700 text-sm mb-1.5">Location Name</label>
                     <input
                       type="text"
                       value={customName}
                       onChange={(e) => setCustomName(e.target.value)}
                       placeholder="e.g., My Favorite Beach"
-                      className="ios-input w-full px-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
+                      className="ios-input w-full px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400"
                     />
                   </div>
 
                   {/* City Input */}
                   <div className="mb-4">
-                    <label className="block text-white/70 text-sm mb-1.5">City (Optional)</label>
+                    <label className="block text-gray-700 text-sm mb-1.5">City (Optional)</label>
                     <input
                       type="text"
                       value={customCity}
                       onChange={(e) => setCustomCity(e.target.value)}
                       placeholder="e.g., Malibu"
-                      className="ios-input w-full px-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
+                      className="ios-input w-full px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400"
                     />
                   </div>
 
