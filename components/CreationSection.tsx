@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, MapPin, Sparkles, Upload, ChevronLeft, ChevronRight, Scissors, ChevronDown, User, Star } from 'lucide-react'
+import { Send, MapPin, Sparkles, Upload, ChevronLeft, ChevronRight, Scissors, ChevronDown, User, Star, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import LocationPanel from './LocationPanel'
 import OutfitPanel from './OutfitPanel'
@@ -198,35 +198,82 @@ export default function CreationSection({
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Prompt user for identity name first
+    const name = window.prompt('Name this identity:', 'My Identity')
+    if (!name) return
+
+    // Compress image before storing
+    const img = new Image()
     const reader = new FileReader()
-    reader.onloadend = () => {
-      const base64 = reader.result as string
 
-      // Prompt user for identity name
-      const name = window.prompt('Name this identity:', 'My Identity')
-      if (!name) return
+    reader.onload = (event) => {
+      img.src = event.target?.result as string
+    }
 
-      const newId = `identity-${Date.now()}`
+    img.onload = () => {
+      // Create canvas for compression
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
 
-      const newIdentity = {
-        id: newId,
-        name,
-        image: base64,
-        isPrimary: savedIdentities.length === 0, // First one is primary
+      // Set max dimensions for thumbnail (smaller for localStorage)
+      const MAX_WIDTH = 200
+      const MAX_HEIGHT = 200
+      let width = img.width
+      let height = img.height
+
+      // Calculate new dimensions while maintaining aspect ratio
+      if (width > height) {
+        if (width > MAX_WIDTH) {
+          height *= MAX_WIDTH / width
+          width = MAX_WIDTH
+        }
+      } else {
+        if (height > MAX_HEIGHT) {
+          width *= MAX_HEIGHT / height
+          height = MAX_HEIGHT
+        }
       }
 
-      const updatedIdentities = [...savedIdentities, newIdentity]
-      setSavedIdentities(updatedIdentities)
-      localStorage.setItem('savedIdentities', JSON.stringify(updatedIdentities))
+      canvas.width = width
+      canvas.height = height
 
-      // Set as current identity
-      if (onIdentityChange) onIdentityChange(newId)
-      if (onImageChange) onImageChange(base64)
-      if (onIdentityNameChange) onIdentityNameChange(name)
+      // Draw and compress
+      ctx?.drawImage(img, 0, 0, width, height)
+      const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7) // 70% quality
 
-      // Clear the file input so the same file can be selected again
-      e.target.value = ''
+      // For the full-size image used in generation, use original
+      const fullReader = new FileReader()
+      fullReader.onloadend = () => {
+        const fullBase64 = fullReader.result as string
+        const newId = `identity-${Date.now()}`
+
+        try {
+          const newIdentity = {
+            id: newId,
+            name,
+            image: compressedBase64, // Store compressed version in localStorage
+            isPrimary: savedIdentities.length === 0,
+          }
+
+          const updatedIdentities = [...savedIdentities, newIdentity]
+          setSavedIdentities(updatedIdentities)
+          localStorage.setItem('savedIdentities', JSON.stringify(updatedIdentities))
+
+          // Set as current identity with full-size image for generation
+          if (onIdentityChange) onIdentityChange(newId)
+          if (onImageChange) onImageChange(fullBase64) // Use full-size for generation
+          if (onIdentityNameChange) onIdentityNameChange(name)
+
+          // Clear the file input
+          e.target.value = ''
+        } catch (error) {
+          console.error('Failed to save identity:', error)
+          alert('Failed to save identity. Storage may be full. Try deleting some old identities.')
+        }
+      }
+      fullReader.readAsDataURL(file)
     }
+
     reader.readAsDataURL(file)
   }
 
@@ -244,6 +291,20 @@ export default function CreationSection({
     }))
     setSavedIdentities(updatedIdentities)
     localStorage.setItem('savedIdentities', JSON.stringify(updatedIdentities))
+  }
+
+  const handleDeleteIdentity = (id: string) => {
+    if (window.confirm('Delete this identity?')) {
+      const updatedIdentities = savedIdentities.filter(identity => identity.id !== id)
+      setSavedIdentities(updatedIdentities)
+      localStorage.setItem('savedIdentities', JSON.stringify(updatedIdentities))
+
+      // If deleting current identity, clear it
+      if (currentIdentity === id) {
+        if (onIdentityChange) onIdentityChange(null)
+        if (onImageChange) onImageChange(null)
+      }
+    }
   }
 
   const handlePromptChange = (value: string) => {
@@ -855,15 +916,30 @@ export default function CreationSection({
                             )}
                           </div>
                         </button>
-                        {!identity.isPrimary && (
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {!identity.isPrimary && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleSetPrimary(identity.id)
+                              }}
+                              className="p-1 hover:bg-white/10 rounded-lg"
+                              title="Set as primary"
+                            >
+                              <Star className="w-4 h-4 text-white/60" />
+                            </button>
+                          )}
                           <button
-                            onClick={() => handleSetPrimary(identity.id)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded-lg"
-                            title="Set as primary"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleDeleteIdentity(identity.id)
+                            }}
+                            className="p-1 hover:bg-red-500/20 rounded-lg"
+                            title="Delete identity"
                           >
-                            <Star className="w-4 h-4 text-white/60" />
+                            <Trash2 className="w-4 h-4 text-red-400" />
                           </button>
-                        )}
+                        </div>
                       </div>
                     ))}
                   </div>
