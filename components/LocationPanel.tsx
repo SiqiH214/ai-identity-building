@@ -183,14 +183,14 @@ export default function LocationPanel({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setShowUploadDialog(false)}
-                  className="fixed inset-0 bg-black/90 backdrop-blur-2xl z-[110]"
+                  className="fixed inset-0 bg-black/90 backdrop-blur-2xl z-[10000]"
                 />
 
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="fixed inset-0 flex items-center justify-center z-[111] p-4 pointer-events-none"
+                  className="fixed inset-0 flex items-center justify-center z-[10001] p-4 pointer-events-none"
                 >
                   <motion.div
                     onClick={(e) => e.stopPropagation()}

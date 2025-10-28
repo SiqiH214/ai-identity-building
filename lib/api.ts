@@ -8,6 +8,8 @@ export interface GenerateImageParams {
   location?: string
   coCreateImages?: string[] // Additional character images for multi-character generation
   outfitImage?: string // Outfit reference image
+  poseImage?: string // Pose reference image
+  locationImage?: string // Location reference image
 }
 
 export interface GenerateImageResponse {

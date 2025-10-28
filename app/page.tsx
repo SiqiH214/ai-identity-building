@@ -1,16 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import IdentitySection from '@/components/IdentitySection'
 import CreationSection from '@/components/CreationSection'
 import ResultsSection from '@/components/ResultsSection'
 import { generateImages, generateImagesByteplus } from '@/lib/api'
 import type { Avatar } from '@/lib/avatars'
+import type { City } from '@/lib/constants'
 
 export interface SelectedElement {
   id: string
-  type: 'avatar' | 'location' | 'outfit' | 'identity'
-  data: Avatar | { name: string; image: string } | null
+  type: 'avatar' | 'location' | 'outfit' | 'identity' | 'emotion' | 'activity' | 'pose'
+  data: Avatar | { name: string; image?: string; emoji?: string; prompt?: string } | null
 }
 
 export default function Home() {
@@ -24,6 +25,50 @@ export default function Home() {
   const [lastPrompt, setLastPrompt] = useState<string>('')
   const [selectedElements, setSelectedElements] = useState<SelectedElement[]>([])
   const [useByteplus, setUseByteplus] = useState(false) // Toggle for testing BytePlus
+  const [selectedCity, setSelectedCity] = useState<City>('Los Angeles')
+  const [prompt, setPrompt] = useState<string>('') // Lift prompt state to page level
+  const resetTimerRef = useRef<(() => void) | null>(null) // Store reference to timer reset function
+
+  const handleRevert = () => {
+    setHasGenerated(false)
+    setGeneratedImages([])
+  }
+
+  const handleRemoveElement = (elementId: string) => {
+    // Find the element being removed
+    const element = selectedElements.find(el => el.id === elementId)
+
+    // Remove from selected elements
+    setSelectedElements(prev => prev.filter(el => el.id !== elementId))
+
+    // Remove text from prompt if element has associated text
+    if (element && element.data) {
+      let textToRemove = ''
+
+      if (element.type === 'location' && 'name' in element.data) {
+        // Remove " in {Location Name}"
+        textToRemove = ` in ${element.data.name}`
+      } else if ((element.type === 'pose' || element.type === 'emotion' || element.type === 'activity') && 'prompt' in element.data && element.data.prompt) {
+        // Remove the pose/emotion/activity prompt text
+        textToRemove = element.data.prompt
+      }
+
+      if (textToRemove) {
+        setPrompt(prev => {
+          // Remove the text (with potential trailing/leading space)
+          let newPrompt = prev.replace(textToRemove + ' ', '')
+          newPrompt = newPrompt.replace(' ' + textToRemove, '')
+          newPrompt = newPrompt.replace(textToRemove, '')
+          return newPrompt.trim()
+        })
+      }
+    }
+
+    // Reset the auto-generate timer (triggers 3s countdown)
+    if (resetTimerRef.current) {
+      resetTimerRef.current()
+    }
+  }
 
   const handleGenerate = async (prompt: string, location?: string) => {
     if (!identityImage) {
@@ -101,6 +146,46 @@ export default function Home() {
       }
     }
 
+    // Check if user has selected a pose
+    const poseElement = selectedElements.find(el => el.type === 'pose')
+    let poseImageBase64: string | undefined = undefined
+
+    if (poseElement && poseElement.data && 'image' in poseElement.data) {
+      const posePath = poseElement.data.image
+      try {
+        const response = await fetch(posePath)
+        const blob = await response.blob()
+        poseImageBase64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(blob)
+        })
+        console.log('🧘 Pose image loaded:', poseElement.data.name)
+      } catch (error) {
+        console.error('❌ Failed to load pose image:', error)
+      }
+    }
+
+    // Check if user has selected a location
+    const locationElement = selectedElements.find(el => el.type === 'location')
+    let locationImageBase64: string | undefined = undefined
+
+    if (locationElement && locationElement.data && 'image' in locationElement.data) {
+      const locationPath = locationElement.data.image
+      try {
+        const response = await fetch(locationPath)
+        const blob = await response.blob()
+        locationImageBase64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(blob)
+        })
+        console.log('📍 Location image loaded:', locationElement.data.name)
+      } catch (error) {
+        console.error('❌ Failed to load location image:', error)
+      }
+    }
+
     try {
       // Choose API based on toggle
       const apiFunction = useByteplus ? generateImagesByteplus : generateImages
@@ -112,6 +197,8 @@ export default function Home() {
         location,
         coCreateImages: coCreateImages.length > 0 ? coCreateImages : undefined,
         outfitImage: outfitImageBase64,
+        poseImage: poseImageBase64,
+        locationImage: locationImageBase64,
       })
 
       if (result.images && result.images.length > 0) {
@@ -183,6 +270,10 @@ export default function Home() {
               selectedElements={selectedElements}
               hasGenerated={hasGenerated}
               identityName={identityName}
+              selectedCity={selectedCity}
+              onCityChange={setSelectedCity}
+              onElementsChange={setSelectedElements}
+              onRemoveElement={handleRemoveElement}
             />
           )}
         </div>
@@ -191,6 +282,7 @@ export default function Home() {
         <div className="flex-none px-6 pb-2">
           <CreationSection
             onGenerate={handleGenerate}
+            onRevert={handleRevert}
             isGenerating={isGenerating}
             hasIdentity={!!identityImage}
             hasGenerated={hasGenerated}
@@ -202,6 +294,12 @@ export default function Home() {
             onIdentityChange={setCurrentIdentity}
             onImageChange={setIdentityImage}
             onIdentityNameChange={setIdentityName}
+            selectedCity={selectedCity}
+            prompt={prompt}
+            onPromptChange={setPrompt}
+            onTimerReset={(resetFn) => {
+              resetTimerRef.current = resetFn
+            }}
           />
         </div>
       </div>

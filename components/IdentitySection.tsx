@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Upload, ChevronDown, User, Star, Edit2, MapPin, Sparkles } from 'lucide-react'
+import { Upload, ChevronDown, User, Star, Edit2, MapPin, Sparkles, Camera, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { SelectedElement } from '@/app/page'
+import { CITIES, type City } from '@/lib/constants'
 
 interface SavedIdentity {
   id: string
@@ -22,6 +23,10 @@ interface IdentitySectionProps {
   selectedElements?: SelectedElement[]
   hasGenerated?: boolean
   identityName?: string
+  selectedCity?: City
+  onCityChange?: (city: City) => void
+  onElementsChange?: (elements: SelectedElement[]) => void
+  onRemoveElement?: (elementId: string) => void
 }
 
 export default function IdentitySection({
@@ -34,6 +39,10 @@ export default function IdentitySection({
   selectedElements = [],
   hasGenerated = false,
   identityName = 'Identity',
+  selectedCity = 'Los Angeles',
+  onCityChange,
+  onElementsChange,
+  onRemoveElement,
 }: IdentitySectionProps) {
   const [showDropdown, setShowDropdown] = useState(false)
   const [savedIdentities, setSavedIdentities] = useState<SavedIdentity[]>([])
@@ -131,8 +140,32 @@ export default function IdentitySection({
     return current?.name || 'Identity'
   }
 
+  const handleRemoveElement = (elementId: string) => {
+    // Use the new callback if provided, otherwise fall back to onElementsChange
+    if (onRemoveElement) {
+      onRemoveElement(elementId)
+    } else if (onElementsChange) {
+      onElementsChange(selectedElements.filter(el => el.id !== elementId))
+    }
+  }
+
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
+      {/* City dropdown menu at the top left */}
+      <div className="absolute top-4 left-4 z-30">
+        <select
+          value={selectedCity}
+          onChange={(e) => onCityChange?.(e.target.value as City)}
+          className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30"
+        >
+          {CITIES.map((city) => (
+            <option key={city} value={city} className="bg-purple-900 text-white">
+              {city}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Central large image area - Genmoji style */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -242,6 +275,24 @@ export default function IdentitySection({
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
                         <Sparkles className="w-8 h-8 text-white/70" />
+                      </div>
+                    )
+                  ) : element.type === 'emotion' || element.type === 'activity' ? (
+                    element.data && 'emoji' in element.data ? (
+                      <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center text-3xl">
+                        {element.data.emoji}
+                      </div>
+                    ) : null
+                  ) : element.type === 'pose' ? (
+                    element.data && 'image' in element.data ? (
+                      <img
+                        src={element.data.image}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-green-500/30 to-blue-500/30 flex items-center justify-center">
+                        <Camera className="w-8 h-8 text-white/70" />
                       </div>
                     )
                   ) : null}
@@ -392,7 +443,7 @@ export default function IdentitySection({
                     y: { duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
                     x: { duration: 4.5 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
                   }}
-                  className="absolute rounded-full backdrop-blur-md border border-white/30 overflow-hidden"
+                  className="absolute rounded-full backdrop-blur-md border border-white/30 overflow-visible"
                   style={{
                     width: 70,
                     height: 70,
@@ -401,37 +452,65 @@ export default function IdentitySection({
                     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1)',
                   }}
                 >
-                  {element.type === 'avatar' && element.data && 'image' in element.data ? (
-                    <img
-                      src={element.data.image}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : element.type === 'location' ? (
-                    element.data && 'image' in element.data ? (
+                  {/* Delete button */}
+                  <button
+                    onClick={() => handleRemoveElement(element.id)}
+                    className="absolute -top-1 -right-1 z-10 w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-all shadow-lg"
+                  >
+                    <X className="w-3 h-3 text-white" />
+                  </button>
+
+                  <div className="w-full h-full rounded-full overflow-hidden">
+                    {element.type === 'avatar' && element.data && 'image' in element.data ? (
                       <img
                         src={element.data.image}
                         alt=""
                         className="w-full h-full object-cover"
                       />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-                        <MapPin className="w-8 h-8 text-white/70" />
-                      </div>
-                    )
-                  ) : element.type === 'outfit' ? (
-                    element.data && 'image' in element.data ? (
-                      <img
-                        src={element.data.image}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
-                        <Sparkles className="w-8 h-8 text-white/70" />
-                      </div>
-                    )
-                  ) : null}
+                    ) : element.type === 'location' ? (
+                      element.data && 'image' in element.data ? (
+                        <img
+                          src={element.data.image}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
+                          <MapPin className="w-8 h-8 text-white/70" />
+                        </div>
+                      )
+                    ) : element.type === 'outfit' ? (
+                      element.data && 'image' in element.data ? (
+                        <img
+                          src={element.data.image}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
+                          <Sparkles className="w-8 h-8 text-white/70" />
+                        </div>
+                      )
+                    ) : element.type === 'emotion' || element.type === 'activity' ? (
+                      element.data && 'emoji' in element.data ? (
+                        <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center text-3xl">
+                          {element.data.emoji}
+                        </div>
+                      ) : null
+                    ) : element.type === 'pose' ? (
+                      element.data && 'image' in element.data ? (
+                        <img
+                          src={element.data.image}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-green-500/30 to-blue-500/30 flex items-center justify-center">
+                          <Camera className="w-8 h-8 text-white/70" />
+                        </div>
+                      )
+                    ) : null}
+                  </div>
                 </motion.div>
               )
             })}

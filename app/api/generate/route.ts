@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { selfie, prompt, location, coCreateImages, outfitImage } = await request.json()
+    const { selfie, prompt, location, coCreateImages, outfitImage, poseImage, locationImage } = await request.json()
 
     if (!selfie || !prompt) {
       return NextResponse.json(
@@ -13,6 +13,8 @@ export async function POST(request: NextRequest) {
 
     const hasMultipleCharacters = coCreateImages && coCreateImages.length > 0
     const hasOutfitReference = outfitImage && outfitImage.length > 0
+    const hasPoseReference = poseImage && poseImage.length > 0
+    const hasLocationReference = locationImage && locationImage.length > 0
 
     const geminiApiKey = process.env.GEMINI_API_KEY
     const imageModel = process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-image'
@@ -34,6 +36,8 @@ export async function POST(request: NextRequest) {
     console.log('🖼️  Image size:', selfie.length, 'bytes')
     console.log('👥 Multiple characters:', hasMultipleCharacters ? `Yes (${coCreateImages.length})` : 'No')
     console.log('👔 Outfit reference:', hasOutfitReference ? 'Yes' : 'No')
+    console.log('🧘 Pose reference:', hasPoseReference ? 'Yes' : 'No')
+    console.log('📍 Location reference:', hasLocationReference ? 'Yes' : 'No')
 
     // Step 0: If outfit is provided, describe it first
     let outfitDescription = ''
@@ -98,12 +102,136 @@ Provide a comprehensive 3-4 sentence description that captures all these element
       }
     }
 
+    // Step 0.1: If pose is provided, describe it
+    let poseDescription = ''
+    if (hasPoseReference) {
+      console.log('🧘 Describing pose from reference image...')
+
+      const poseDescribeParts = [
+        {
+          inline_data: {
+            mime_type: poseImage.startsWith('data:image/png') ? 'image/png' : 'image/jpeg',
+            data: poseImage.split(',')[1],
+          },
+        },
+        {
+          text: `Describe this body pose and posture in extreme detail for image generation purposes. Focus on:
+
+1. **Body Position**: Describe the overall stance (standing, sitting, leaning, lying down, etc.)
+2. **Limb Placement**: Detail arm and leg positions (crossed, extended, bent, etc.)
+3. **Hand Gestures**: Describe hand positioning and gestures precisely
+4. **Head Angle**: Note the tilt and direction of the head
+5. **Weight Distribution**: Describe how weight is distributed (leaning on one leg, centered, etc.)
+6. **Body Angles**: Mention any twists, turns, or angles in the torso
+7. **Overall Vibe**: The energy and feel of the pose (confident, relaxed, playful, contemplative, etc.)
+
+Provide a comprehensive 2-3 sentence description that captures the exact pose for accurate reproduction.`
+        }
+      ]
+
+      const poseDescribeResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: poseDescribeParts
+              }
+            ],
+            generationConfig: {
+              temperature: 0.4,
+              maxOutputTokens: 300,
+            },
+          }),
+        }
+      )
+
+      if (poseDescribeResponse.ok) {
+        const poseData = await poseDescribeResponse.json()
+        if (poseData.candidates?.[0]?.content?.parts?.[0]?.text) {
+          poseDescription = poseData.candidates[0].content.parts[0].text.trim()
+          console.log('✅ Pose described:', poseDescription.substring(0, 100) + '...')
+        }
+      }
+    }
+
+    // Step 0.2: If location is provided, describe it
+    let locationDescription = ''
+    if (hasLocationReference) {
+      console.log('📍 Describing location from reference image...')
+
+      const locationDescribeParts = [
+        {
+          inline_data: {
+            mime_type: locationImage.startsWith('data:image/png') ? 'image/png' : 'image/jpeg',
+            data: locationImage.split(',')[1],
+          },
+        },
+        {
+          text: `Describe this location/background in extreme detail for image generation purposes. Focus on:
+
+1. **Location Type**: Identify the setting (indoor/outdoor, urban/nature, specific venue type)
+2. **Architecture & Structures**: Describe buildings, walls, floors, ceilings, notable structures
+3. **Lighting**: Natural or artificial lighting, time of day indicators, light quality
+4. **Colors & Atmosphere**: Dominant colors, mood, weather conditions
+5. **Key Elements**: Furniture, objects, decorations, natural features
+6. **Spatial Layout**: Depth, perspective, foreground/background elements
+7. **Style & Aesthetic**: Modern, vintage, minimalist, busy, natural, etc.
+
+Provide a comprehensive 3-4 sentence description that captures the setting for accurate reproduction.`
+        }
+      ]
+
+      const locationDescribeResponse = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${imageModel}:generateContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: locationDescribeParts
+              }
+            ],
+            generationConfig: {
+              temperature: 0.4,
+              maxOutputTokens: 400,
+            },
+          }),
+        }
+      )
+
+      if (locationDescribeResponse.ok) {
+        const locationData = await locationDescribeResponse.json()
+        if (locationData.candidates?.[0]?.content?.parts?.[0]?.text) {
+          locationDescription = locationData.candidates[0].content.parts[0].text.trim()
+          console.log('✅ Location described:', locationDescription.substring(0, 100) + '...')
+        }
+      }
+    }
+
     // Step 1: 使用专业摄影师的视角重写用户的提示词（保持身份）
     console.log('✍️  Rewriting prompt as professional photographer...')
 
     // Prepare outfit instruction if available
     const outfitInstruction = outfitDescription
       ? `\n\nOUTFIT REFERENCE: The subject should be wearing: ${outfitDescription}\nMake sure to incorporate this outfit description into the final image.`
+      : ''
+
+    // Prepare pose instruction if available
+    const poseInstruction = poseDescription
+      ? `\n\nPOSE REFERENCE: The subject should adopt this pose: ${poseDescription}\nMake sure to match this pose exactly in the final image.`
+      : ''
+
+    // Prepare location instruction if available
+    const locationInstruction = locationDescription
+      ? `\n\nLOCATION REFERENCE: The scene should be set in: ${locationDescription}\nMake sure to recreate this location/background accurately in the final image.`
       : ''
 
     // Build parts array with structured multi-image prompt
@@ -120,7 +248,7 @@ Provide a comprehensive 3-4 sentence description that captures all these element
       rewriteParts.push({
         text: `You are a world-class professional photographer. You will see ${coCreateImages.length + 1} reference images showing different people. Your task is to rewrite the user's intent into a professional photography prompt that includes ALL people from the reference images.
 
-User's intent: "${userIntent}"${outfitInstruction}
+User's intent: "${userIntent}"${outfitInstruction}${poseInstruction}${locationInstruction}
 
 Requirements:
 - Include ALL ${coCreateImages.length + 1} people in the scene
@@ -164,7 +292,7 @@ Rewrite this into ONE professional prompt:`
       rewriteParts.push({
         text: `You are a world-class professional Adobe photographer with exceptional taste in image generation and editing.
 
-User's intent: "${userIntent}"${outfitInstruction}
+User's intent: "${userIntent}"${outfitInstruction}${poseInstruction}${locationInstruction}
 
 Your task: Rewrite this into ONE professional image editing prompt that will be sent to Gemini's image generation API.
 

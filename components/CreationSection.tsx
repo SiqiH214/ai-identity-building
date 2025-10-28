@@ -1,13 +1,13 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Mic, MapPin, Lightbulb, Sparkles, ChevronDown, Upload, Star, Edit2, Trash2 } from 'lucide-react'
+import { Send, MapPin, Sparkles, Upload, ChevronLeft, ChevronRight, Scissors } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import LocationPanel from './LocationPanel'
-import IdeasPanel from './IdeasPanel'
 import OutfitPanel from './OutfitPanel'
+import StealElementsPanel from './StealElementsPanel'
 import { AVATARS } from '@/lib/avatars'
-import { LOCATIONS, OUTFITS } from '@/lib/constants'
+import { LOCATIONS, OUTFITS, EMOTIONS, ACTIVITIES, POSES, CITIES, type City } from '@/lib/constants'
 import type { SelectedElement } from '@/app/page'
 
 interface SavedIdentity {
@@ -19,6 +19,7 @@ interface SavedIdentity {
 
 interface CreationSectionProps {
   onGenerate: (prompt: string, location?: string) => void
+  onRevert?: () => void
   isGenerating: boolean
   hasIdentity: boolean
   hasGenerated?: boolean
@@ -31,10 +32,17 @@ interface CreationSectionProps {
   onIdentityChange?: (id: string | null) => void
   onImageChange?: (image: string | null) => void
   onIdentityNameChange?: (name: string) => void
+  selectedCity?: City
+  prompt?: string
+  onPromptChange?: (prompt: string) => void
+  onTimerReset?: (resetFn: () => void) => void // Callback to expose timer reset function
 }
+
+type CategoryType = 'location' | 'outfits' | 'people' | 'emotion' | 'activities' | 'pose'
 
 export default function CreationSection({
   onGenerate,
+  onRevert,
   isGenerating,
   hasIdentity,
   hasGenerated = false,
@@ -47,25 +55,56 @@ export default function CreationSection({
   onIdentityChange,
   onImageChange,
   onIdentityNameChange,
+  selectedCity = 'Los Angeles',
+  prompt: externalPrompt,
+  onPromptChange,
+  onTimerReset,
 }: CreationSectionProps) {
-  const [prompt, setPrompt] = useState('')
+  const [internalPrompt, setInternalPrompt] = useState('')
+  const prompt = externalPrompt !== undefined ? externalPrompt : internalPrompt
+  const setPrompt = onPromptChange || setInternalPrompt
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>('location')
   const [selectedLocation, setSelectedLocation] = useState<typeof LOCATIONS[0] | null>(null)
   const [showLocationPanel, setShowLocationPanel] = useState(false)
   const [selectedOutfit, setSelectedOutfit] = useState<typeof OUTFITS[0] | null>(null)
   const [showOutfitPanel, setShowOutfitPanel] = useState(false)
-  const [showIdeasPanel, setShowIdeasPanel] = useState(false)
-  const [suggestions, setSuggestions] = useState<string[]>([])
-  const [showMentionSuggestions, setShowMentionSuggestions] = useState(false)
-  const [mentionSearch, setMentionSearch] = useState('')
-  const [selectedCoCreateFriend, setSelectedCoCreateFriend] = useState<typeof AVATARS[0] | null>(null)
-  const [hasInitializedPrompt, setHasInitializedPrompt] = useState(false)
-  const [showIdentityDropdown, setShowIdentityDropdown] = useState(false)
-  const [savedIdentities, setSavedIdentities] = useState<SavedIdentity[]>([])
+  const [showStealElementsPanel, setShowStealElementsPanel] = useState(false)
   const [customLocations, setCustomLocations] = useState<Array<{ name: string; image: string; city: string }>>([])
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editingName, setEditingName] = useState('')
+  const [customOutfits, setCustomOutfits] = useState<Array<{ name: string; image: string; category: string }>>([])
+  const [hasInitializedPrompt, setHasInitializedPrompt] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const autoGenerateTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  // Fetch custom locations and outfits from cloud on mount
+  useEffect(() => {
+    const fetchCloudData = async () => {
+      try {
+        // Fetch custom locations
+        const locationsResponse = await fetch('/api/locations')
+        if (locationsResponse.ok) {
+          const locationsData = await locationsResponse.json()
+          if (locationsData.success && locationsData.locations) {
+            setCustomLocations(locationsData.locations)
+          }
+        }
+
+        // Fetch custom outfits
+        const outfitsResponse = await fetch('/api/outfits')
+        if (outfitsResponse.ok) {
+          const outfitsData = await outfitsResponse.json()
+          if (outfitsData.success && outfitsData.outfits) {
+            setCustomOutfits(outfitsData.outfits)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching cloud data:', error)
+      }
+    }
+
+    fetchCloudData()
+  }, [])
 
   // Auto-populate prompt with [@identity name] when identity is first available
   useEffect(() => {
@@ -90,50 +129,36 @@ export default function CreationSection({
     }
   }, [identityImage, identityName, hasInitializedPrompt, prompt, onElementsChange])
 
-  // Sync selectedElements with mentions in prompt (for backspace deletion)
-  useEffect(() => {
-    if (!onElementsChange) return
-
-    // Extract all @mentions from current prompt
-    const mentionRegex = /@(\w+)/g
-    const currentMentions = new Set(
-      Array.from(prompt.matchAll(mentionRegex)).map(match => match[1].toLowerCase())
-    )
-
-    // Remove elements that are no longer mentioned in prompt
-    const updatedElements = selectedElements.filter(el => {
-      if (el.type !== 'avatar' && el.type !== 'identity') return true
-      if (!el.data || !('username' in el.data)) return true
-
-      const username = el.data.username.replace('@', '').toLowerCase()
-      return currentMentions.has(username)
-    })
-
-    // Only update if there's a change
-    if (updatedElements.length !== selectedElements.length) {
-      onElementsChange(updatedElements)
+  // Auto-generation timer: trigger generation 2s after user stops interacting
+  const resetAutoGenerateTimer = () => {
+    // Clear existing timer
+    if (autoGenerateTimerRef.current) {
+      clearTimeout(autoGenerateTimerRef.current)
     }
-  }, [prompt, selectedElements, onElementsChange])
 
-  // Load saved identities from localStorage
+    // Only set timer if we have identity and valid prompt
+    if (hasIdentity && prompt.trim()) {
+      autoGenerateTimerRef.current = setTimeout(() => {
+        handleGenerate()
+      }, 3000) // Changed from 2000ms to 3000ms (3 seconds)
+    }
+  }
+
+  // Expose timer reset function to parent via callback
   useEffect(() => {
-    const saved = localStorage.getItem('savedIdentities')
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setSavedIdentities(parsed)
-      } catch (error) {
-        console.error('Failed to parse saved identities:', error)
+    if (onTimerReset) {
+      onTimerReset(resetAutoGenerateTimer)
+    }
+  }, [onTimerReset])
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (autoGenerateTimerRef.current) {
+        clearTimeout(autoGenerateTimerRef.current)
       }
     }
   }, [])
-
-  // Save identities to localStorage whenever they change
-  useEffect(() => {
-    if (savedIdentities.length > 0) {
-      localStorage.setItem('savedIdentities', JSON.stringify(savedIdentities))
-    }
-  }, [savedIdentities])
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -143,73 +168,19 @@ export default function CreationSection({
     reader.onloadend = () => {
       const base64 = reader.result as string
       const newId = Date.now().toString()
-      const defaultName = `Identity ${savedIdentities.length + 1}`
-
-      const newIdentity: SavedIdentity = {
-        id: newId,
-        name: defaultName,
-        image: base64,
-        isPrimary: savedIdentities.length === 0, // First identity is primary
-      }
-
-      setSavedIdentities(prev => [...prev, newIdentity])
+      const defaultName = `Identity`
 
       // Set as current identity
       if (onIdentityChange) onIdentityChange(newId)
       if (onImageChange) onImageChange(base64)
       if (onIdentityNameChange) onIdentityNameChange(defaultName)
-
-      setShowIdentityDropdown(false)
     }
     reader.readAsDataURL(file)
   }
 
-  const handleRename = (id: string, newName: string) => {
-    if (!newName.trim()) return
-
-    setSavedIdentities(prev =>
-      prev.map(identity =>
-        identity.id === id ? { ...identity, name: newName } : identity
-      )
-    )
-
-    // If renaming current identity, update it
-    if (identityImage === savedIdentities.find(i => i.id === id)?.image) {
-      if (onIdentityNameChange) onIdentityNameChange(newName)
-    }
-
-    setEditingId(null)
-  }
-
-  const handleSetPrimary = (id: string) => {
-    setSavedIdentities(prev =>
-      prev.map(identity => ({
-        ...identity,
-        isPrimary: identity.id === id,
-      }))
-    )
-  }
-
-  const handleDelete = (id: string) => {
-    if (confirm('Delete this identity?')) {
-      setSavedIdentities(prev => prev.filter(identity => identity.id !== id))
-
-      // If deleting current identity, clear it
-      if (identityImage === savedIdentities.find(i => i.id === id)?.image) {
-        if (onIdentityChange) onIdentityChange(null)
-        if (onImageChange) onImageChange(null)
-      }
-    }
-  }
-
-  const getCurrentIdentityName = () => {
-    if (!identityImage) return 'Identity'
-    const current = savedIdentities.find(id => id.image === identityImage)
-    return current?.name || identityName
-  }
-
   const handlePromptChange = (value: string) => {
     setPrompt(value)
+    resetAutoGenerateTimer()
 
     // Auto-add bubbles for completed mentions
     if (onElementsChange) {
@@ -240,43 +211,6 @@ export default function CreationSection({
         }
       })
     }
-
-    // Check for @ mentions
-    const cursorPos = textareaRef.current?.selectionStart || 0
-    const textBeforeCursor = value.slice(0, cursorPos)
-    const lastAtIndex = textBeforeCursor.lastIndexOf('@')
-
-    if (lastAtIndex !== -1 && lastAtIndex === cursorPos - 1) {
-      // Just typed @
-      setShowMentionSuggestions(true)
-      setMentionSearch('')
-    } else if (lastAtIndex !== -1 && cursorPos > lastAtIndex) {
-      // Typing after @
-      const searchTerm = textBeforeCursor.slice(lastAtIndex + 1)
-      if (!/\s/.test(searchTerm)) {
-        // No space after @, show suggestions
-        setShowMentionSuggestions(true)
-        setMentionSearch(searchTerm.toLowerCase())
-      } else {
-        setShowMentionSuggestions(false)
-      }
-    } else {
-      setShowMentionSuggestions(false)
-    }
-
-    // Simple suggestion system
-    if (value.length > 3 && !showMentionSuggestions) {
-      const mockSuggestions = [
-        'Cooking at home',
-        'Walking in the park',
-        'Reading in a café',
-      ]
-      setSuggestions(mockSuggestions.filter(s =>
-        s.toLowerCase().includes(value.toLowerCase())
-      ))
-    } else {
-      setSuggestions([])
-    }
   }
 
   const handleAvatarClick = (avatar: typeof AVATARS[0]) => {
@@ -294,17 +228,10 @@ export default function CreationSection({
       const newPrompt = prompt.replace(usernamePattern, ' ').replace(/\s+/g, ' ').trim()
       setPrompt(newPrompt + (newPrompt ? ' ' : ''))
 
-      // Clear selected friend if it was this one
-      if (selectedCoCreateFriend?.id === avatar.id) {
-        setSelectedCoCreateFriend(null)
-      }
-
       return
     }
 
     // Select: add to selectedElements
-    setSelectedCoCreateFriend(avatar)
-
     if (onElementsChange) {
       onElementsChange([...selectedElements, {
         id: avatar.id,
@@ -313,15 +240,11 @@ export default function CreationSection({
       }])
     }
 
-    const cursorPos = textareaRef.current?.selectionStart || prompt.length
-    const textBeforeCursor = prompt.slice(0, cursorPos)
-    const textAfterCursor = prompt.slice(cursorPos)
-
-    // Add space before @ if needed
-    const needsSpaceBefore = textBeforeCursor.length > 0 && !textBeforeCursor.endsWith(' ')
-    const newPrompt = textBeforeCursor + (needsSpaceBefore ? ' ' : '') + avatar.username + ' ' + textAfterCursor
-
+    // Add to prompt
+    const needsSpaceBefore = prompt.length > 0 && !prompt.endsWith(' ')
+    const newPrompt = prompt + (needsSpaceBefore ? ' ' : '') + avatar.username + ' '
     setPrompt(newPrompt)
+    resetAutoGenerateTimer()
 
     // Focus textarea
     setTimeout(() => {
@@ -329,49 +252,28 @@ export default function CreationSection({
     }, 0)
   }
 
-  const handleMentionSelect = (username: string) => {
-    const cursorPos = textareaRef.current?.selectionStart || 0
-    const textBeforeCursor = prompt.slice(0, cursorPos)
-    const textAfterCursor = prompt.slice(cursorPos)
-
-    // Find the @ symbol before cursor
-    const lastAtIndex = textBeforeCursor.lastIndexOf('@')
-
-    if (lastAtIndex !== -1) {
-      const before = textBeforeCursor.slice(0, lastAtIndex)
-      const newPrompt = before + username + ' ' + textAfterCursor
-      setPrompt(newPrompt)
-      setShowMentionSuggestions(false)
-
-      // Focus textarea
-      setTimeout(() => {
-        textareaRef.current?.focus()
-      }, 0)
-    }
-  }
-
-  const filteredAvatars = showMentionSuggestions
-    ? AVATARS.filter(avatar =>
-        avatar.username.toLowerCase().includes(mentionSearch) ||
-        avatar.name.toLowerCase().includes(mentionSearch)
-      )
-    : []
-
   const handleGenerate = () => {
     if (!hasIdentity) {
       alert('Please upload your selfie first 😊')
       return
     }
     if (!prompt.trim()) {
-      alert('Please describe what you are doing')
       return
     }
     onGenerate(prompt, selectedLocation?.name || undefined)
   }
 
   const handleLocationSelect = (location: typeof LOCATIONS[0]) => {
+    // If user is selecting elements after generation, revert to element selection state
+    if (hasGenerated && onRevert) {
+      onRevert()
+    }
+
     setSelectedLocation(location)
-    setShowLocationPanel(false)
+
+    // Add location text to prompt
+    const newPrompt = prompt + (prompt && !prompt.endsWith(' ') ? ' ' : '') + ' in ' + location.name
+    setPrompt(newPrompt)
 
     // Add to selected elements on canvas
     if (onElementsChange) {
@@ -384,15 +286,101 @@ export default function CreationSection({
         }])
       }
     }
+
+    resetAutoGenerateTimer()
+
+    // Focus textarea after adding location
+    setTimeout(() => {
+      textareaRef.current?.focus()
+    }, 0)
   }
 
-  const handleAddCustomLocation = (location: { name: string; image: string; city: string }) => {
-    setCustomLocations([...customLocations, location])
+  const handleAddCustomLocation = async (location: { name: string; image: string; city: string }) => {
+    try {
+      // Save to cloud
+      const response = await fetch('/api/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(location),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.location) {
+          // Add to local state
+          setCustomLocations([...customLocations, data.location])
+          console.log('✅ Location saved to cloud:', data.message)
+        }
+      } else {
+        console.error('Failed to save location to cloud')
+        // Fallback to local state only
+        setCustomLocations([...customLocations, location])
+      }
+    } catch (error) {
+      console.error('Error saving location:', error)
+      // Fallback to local state only
+      setCustomLocations([...customLocations, location])
+    }
+  }
+
+  const handleSaveStealLocation = async (location: { name: string; image: string; city: string }) => {
+    try {
+      // Save to cloud
+      const response = await fetch('/api/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(location),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.location) {
+          // Add to local state
+          setCustomLocations([...customLocations, data.location])
+          console.log('✅ Location saved to cloud:', data.message)
+        }
+      } else {
+        console.error('Failed to save location to cloud')
+        // Fallback to local state only
+        setCustomLocations([...customLocations, location])
+      }
+    } catch (error) {
+      console.error('Error saving location:', error)
+      // Fallback to local state only
+      setCustomLocations([...customLocations, location])
+    }
+  }
+
+  const handleSaveStealOutfit = async (outfit: { name: string; image: string; category: string }) => {
+    try {
+      // Save to cloud
+      const response = await fetch('/api/outfits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(outfit),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.outfit) {
+          // Add to local state
+          setCustomOutfits([...customOutfits, data.outfit])
+          console.log('✅ Outfit saved to cloud:', data.message)
+        }
+      } else {
+        console.error('Failed to save outfit to cloud')
+        // Fallback to local state only
+        setCustomOutfits([...customOutfits, outfit])
+      }
+    } catch (error) {
+      console.error('Error saving outfit:', error)
+      // Fallback to local state only
+      setCustomOutfits([...customOutfits, outfit])
+    }
   }
 
   const handleOutfitSelect = (outfit: typeof OUTFITS[0]) => {
     setSelectedOutfit(outfit)
-    setShowOutfitPanel(false)
 
     // Add to selected elements on canvas
     if (onElementsChange) {
@@ -405,395 +393,405 @@ export default function CreationSection({
         }])
       }
     }
+
+    resetAutoGenerateTimer()
   }
 
-  const handleIdeaSelect = (idea: string) => {
-    setPrompt(idea)
-    setShowIdeasPanel(false)
+  const handleEmotionClick = (emotion: typeof EMOTIONS[0]) => {
+    const newPrompt = prompt + (prompt && !prompt.endsWith(' ') ? ' ' : '') + emotion.prompt + ' '
+    setPrompt(newPrompt)
+
+    // Add to selected elements on canvas
+    if (onElementsChange) {
+      const exists = selectedElements.some(el => el.id === `emotion-${emotion.name}`)
+      if (!exists) {
+        onElementsChange([...selectedElements, {
+          id: `emotion-${emotion.name}`,
+          type: 'emotion' as any,
+          data: { name: emotion.name, emoji: emotion.emoji, prompt: emotion.prompt }
+        }])
+      }
+    }
+
+    resetAutoGenerateTimer()
+    textareaRef.current?.focus()
   }
 
-  const handleShortcutClick = (shortcut: string) => {
-    setPrompt(shortcut)
+  const handleActivityClick = (activity: typeof ACTIVITIES[0]) => {
+    const newPrompt = prompt + (prompt && !prompt.endsWith(' ') ? ' ' : '') + activity.prompt + ' '
+    setPrompt(newPrompt)
+
+    // Add to selected elements on canvas
+    if (onElementsChange) {
+      const exists = selectedElements.some(el => el.id === `activity-${activity.name}`)
+      if (!exists) {
+        onElementsChange([...selectedElements, {
+          id: `activity-${activity.name}`,
+          type: 'activity' as any,
+          data: { name: activity.name, emoji: activity.emoji, prompt: activity.prompt }
+        }])
+      }
+    }
+
+    resetAutoGenerateTimer()
+    textareaRef.current?.focus()
   }
 
-  // Suggested shortcuts that appear after first generation
-  const suggestedShortcuts = [
-    'having coffee',
-    'walking around',
-    'taking a photo',
-    'reading a book',
-    'listening to music',
-    'working on laptop'
+  const handlePoseClick = (pose: typeof POSES[0]) => {
+    const newPrompt = prompt + (prompt && !prompt.endsWith(' ') ? ' ' : '') + pose.prompt + ' '
+    setPrompt(newPrompt)
+
+    // Add to selected elements on canvas
+    if (onElementsChange) {
+      const exists = selectedElements.some(el => el.id === `pose-${pose.name}`)
+      if (!exists) {
+        onElementsChange([...selectedElements, {
+          id: `pose-${pose.name}`,
+          type: 'pose' as any,
+          data: { name: pose.name, image: pose.image, prompt: pose.prompt }
+        }])
+      }
+    }
+
+    resetAutoGenerateTimer()
+    textareaRef.current?.focus()
+  }
+
+  const handleSendClick = () => {
+    // Cancel auto-generate timer if running
+    if (autoGenerateTimerRef.current) {
+      clearTimeout(autoGenerateTimerRef.current)
+    }
+    handleGenerate()
+  }
+
+  const handleScroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = 200
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      })
+    }
+  }
+
+  // Category data
+  const categories = [
+    { id: 'location' as CategoryType, label: 'Location', icon: MapPin },
+    { id: 'outfits' as CategoryType, label: 'Outfits', icon: Sparkles },
+    { id: 'pose' as CategoryType, label: 'Pose', icon: null },
+    { id: 'people' as CategoryType, label: 'People', icon: null },
+    { id: 'emotion' as CategoryType, label: 'Emotion', icon: null },
+    { id: 'activities' as CategoryType, label: 'Activities', icon: null },
   ]
 
-  return (
-    <div className="w-full liquid-glass rounded-3xl p-4 flex flex-col gap-3">
-      {/* Main input area */}
-      <div className="flex flex-col gap-3">
-        {/* Co-Create Avatars with Location and Outfit */}
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-            {/* Location Bubble */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowLocationPanel(true)}
-              className="flex flex-col items-center gap-1.5 flex-shrink-0 group"
-            >
-              <div className={`w-14 h-14 rounded-full overflow-hidden border-2 transition-colors backdrop-blur-xl flex items-center justify-center ${
-                selectedLocation
-                  ? 'border-blue-400 ring-2 ring-blue-400/50'
-                  : 'border-white/20 group-hover:border-white/50'
-              }`}>
-                {selectedLocation ? (
+  // Render category content
+  const renderCategoryContent = () => {
+    switch (selectedCategory) {
+      case 'location': {
+        // Filter locations by selected city
+        const filteredLocations = LOCATIONS.filter(loc => loc.city === selectedCity)
+        const allLocations = [...customLocations.filter(loc => loc.city === selectedCity), ...filteredLocations]
+
+        return (
+          <div className="flex gap-3">
+            {allLocations.map((location, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-1">
+                <button
+                  onClick={() => handleLocationSelect(location)}
+                  className={`flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 transition-all ${
+                    selectedLocation?.name === location.name
+                      ? 'border-blue-400 ring-2 ring-blue-400/50'
+                      : 'border-white/20 hover:border-white/40'
+                  }`}
+                >
                   <img
-                    src={selectedLocation.image}
-                    alt=""
+                    src={location.image}
+                    alt={location.name}
                     className="w-full h-full object-cover"
                   />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-white" />
-                  </div>
-                )}
+                </button>
+                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{location.name}</p>
               </div>
-              <span className="text-xs text-white/70 group-hover:text-white transition-colors">
-                {selectedLocation ? selectedLocation.name.slice(0, 8) + '...' : 'Location'}
-              </span>
-            </motion.button>
+            ))}
+            {selectedCity !== 'Home' && (
+              <div className="flex flex-col items-center gap-1">
+                <button
+                  onClick={() => setShowLocationPanel(true)}
+                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-white/30 hover:border-white/50 bg-white/5 flex items-center justify-center transition-all"
+                >
+                  <Upload className="w-6 h-6 text-white/50" />
+                </button>
+                <p className="text-[10px] text-white/60 text-center w-20">More</p>
+              </div>
+            )}
+          </div>
+        )
+      }
 
-            {/* Outfit/Style Bubble */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.05 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowOutfitPanel(true)}
-              className="flex flex-col items-center gap-1.5 flex-shrink-0 group"
-            >
-              <div className={`w-14 h-14 rounded-full overflow-hidden border-2 transition-colors backdrop-blur-xl flex items-center justify-center ${
-                selectedOutfit
-                  ? 'border-pink-400 ring-2 ring-pink-400/50'
-                  : 'border-white/20 group-hover:border-white/50'
-              }`}>
-                {selectedOutfit ? (
+      case 'outfits':
+        const allOutfits = [...customOutfits, ...OUTFITS]
+        return (
+          <div className="flex gap-3">
+            {allOutfits.map((outfit, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-1">
+                <button
+                  onClick={() => handleOutfitSelect(outfit)}
+                  className={`flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 transition-all ${
+                    selectedOutfit?.name === outfit.name
+                      ? 'border-pink-400 ring-2 ring-pink-400/50'
+                      : 'border-white/20 hover:border-white/40'
+                  }`}
+                >
                   <img
-                    src={selectedOutfit.image}
-                    alt=""
+                    src={outfit.image}
+                    alt={outfit.name}
                     className="w-full h-full object-cover"
                   />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
-                    <Sparkles className="w-6 h-6 text-white" />
-                  </div>
-                )}
+                </button>
+                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{outfit.name}</p>
               </div>
-              <span className="text-xs text-white/70 group-hover:text-white transition-colors">
-                {selectedOutfit ? selectedOutfit.name.slice(0, 8) + (selectedOutfit.name.length > 8 ? '...' : '') : 'Outfit'}
-              </span>
-            </motion.button>
-
-            {/* Co-create Avatars */}
-            {AVATARS.map((avatar, idx) => (
-              <motion.button
-                key={avatar.id}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: (idx + 2) * 0.05 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleAvatarClick(avatar)}
-                className="flex flex-col items-center gap-1.5 flex-shrink-0 group relative"
+            ))}
+            <div className="flex flex-col items-center gap-1">
+              <button
+                onClick={() => setShowOutfitPanel(true)}
+                className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-white/30 hover:border-white/50 bg-white/5 flex items-center justify-center transition-all"
               >
-                <div className={`w-14 h-14 rounded-full overflow-hidden border-2 transition-colors ${
-                  selectedCoCreateFriend?.id === avatar.id
-                    ? 'border-blue-400 ring-2 ring-blue-400/50'
-                    : 'border-white/20 group-hover:border-white/50'
-                }`}>
-                  <img
-                    src={avatar.image}
-                    alt={avatar.name}
-                    className="w-full h-full object-cover"
-                  />
+                <Upload className="w-6 h-6 text-white/50" />
+              </button>
+              <p className="text-[10px] text-white/60 text-center w-20">More</p>
+            </div>
+          </div>
+        )
+
+      case 'people':
+        return (
+          <div className="flex gap-3">
+            {AVATARS.map((avatar, idx) => {
+              const isSelected = selectedElements.some(el => el.id === avatar.id)
+              return (
+                <div key={avatar.id} className="flex flex-col items-center gap-1">
+                  <button
+                    onClick={() => handleAvatarClick(avatar)}
+                    className={`flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 transition-all ${
+                      isSelected
+                        ? 'border-blue-400 ring-2 ring-blue-400/50'
+                        : 'border-white/20 hover:border-white/40'
+                    }`}
+                  >
+                    <img
+                      src={avatar.image}
+                      alt={avatar.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                  <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{avatar.name}</p>
                 </div>
-                <span className="text-xs text-white/70 group-hover:text-white transition-colors">
-                  {avatar.username}
-                </span>
-              </motion.button>
+              )
+            })}
+          </div>
+        )
+
+      case 'emotion':
+        return (
+          <div className="flex gap-3">
+            {EMOTIONS.map((emotion, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-1">
+                <button
+                  onClick={() => handleEmotionClick(emotion)}
+                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-white/20 hover:border-white/40 bg-white/5 flex items-center justify-center text-3xl transition-all hover:scale-105 active:scale-95"
+                >
+                  {emotion.emoji}
+                </button>
+                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{emotion.name}</p>
+              </div>
             ))}
           </div>
+        )
+
+      case 'activities':
+        return (
+          <div className="flex gap-3">
+            {ACTIVITIES.map((activity, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-1">
+                <button
+                  onClick={() => handleActivityClick(activity)}
+                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-white/20 hover:border-white/40 bg-white/5 flex items-center justify-center text-3xl transition-all hover:scale-105 active:scale-95"
+                >
+                  {activity.emoji}
+                </button>
+                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{activity.name}</p>
+              </div>
+            ))}
+          </div>
+        )
+
+      case 'pose':
+        return (
+          <div className="flex gap-3">
+            {POSES.map((pose, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-1">
+                <button
+                  onClick={() => handlePoseClick(pose)}
+                  className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 hover:border-white/40 transition-all hover:scale-105 active:scale-95"
+                  title={pose.name}
+                >
+                  <img
+                    src={pose.image}
+                    alt={pose.name}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+                <p className="text-[10px] text-white/60 text-center w-20 line-clamp-1">{pose.name}</p>
+              </div>
+            ))}
+          </div>
+        )
+
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="w-full liquid-glass rounded-3xl p-4 flex flex-col gap-4">
+      {/* Category Pills with Steal Elements Button */}
+      <div className="flex items-center gap-2">
+        <div className="flex-1 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                selectedCategory === category.id
+                  ? 'bg-white text-purple-600'
+                  : 'bg-white/10 text-white hover:bg-white/20'
+              }`}
+            >
+              {category.label}
+            </button>
+          ))}
         </div>
 
-        <div className="relative">
+        {/* Steal Elements Button */}
+        <button
+          onClick={() => setShowStealElementsPanel(true)}
+          className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          title="Steal Elements from Photo"
+        >
+          <Scissors className="w-5 h-5 text-white" />
+        </button>
+      </div>
+
+      {/* Swipeable Elements Panel */}
+      <div className="relative">
+        {/* Left scroll button */}
+        <button
+          onClick={() => handleScroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-all"
+        >
+          <ChevronLeft className="w-5 h-5 text-white" />
+        </button>
+
+        {/* Scrollable content */}
+        <div
+          ref={scrollContainerRef}
+          className="overflow-x-auto scrollbar-hide px-10"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {renderCategoryContent()}
+        </div>
+
+        {/* Right scroll button */}
+        <button
+          onClick={() => handleScroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-all"
+        >
+          <ChevronRight className="w-5 h-5 text-white" />
+        </button>
+      </div>
+
+      {/* Prompt Input with Identity Avatar and Send Button */}
+      <div className="relative flex items-center gap-2">
+        {/* Identity Avatar (left side) */}
+        {hasIdentity && identityImage && (
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 hover:border-white/50 transition-all"
+            title="Change identity"
+          >
+            <img
+              src={identityImage}
+              alt="Your identity"
+              className="w-full h-full object-cover"
+            />
+          </button>
+        )}
+
+        {/* Prompt textarea */}
+        <div className="relative flex-1">
           <textarea
             ref={textareaRef}
             value={prompt}
             onChange={(e) => handlePromptChange(e.target.value)}
-            placeholder="Describe what you are doing... (use @ to mention)"
-            className="ios-input w-full h-16 px-3 py-2.5 pr-12 text-white resize-none placeholder:text-white/40 text-sm"
+            placeholder="Describe a Genmoji"
+            className="ios-input w-full h-14 px-4 py-3 pr-14 text-white resize-none placeholder:text-white/40 text-sm rounded-2xl"
             disabled={isGenerating}
-            rows={2}
+            rows={1}
           />
 
-          {/* Ideas button inside textarea */}
-          <button
-            onClick={() => setShowIdeasPanel(true)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-white/10 transition-colors"
-            title="Get ideas"
-          >
-            <Lightbulb className="w-5 h-5 text-white/50 hover:text-white" />
-          </button>
-
-          {/* @mention autocomplete suggestions - above the input */}
-          <AnimatePresence>
-            {showMentionSuggestions && filteredAvatars.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="absolute bottom-full mb-1.5 w-full rounded-2xl p-2 z-10 max-h-64 overflow-y-auto backdrop-blur-3xl border border-white/20"
-                style={{
-                  background: 'rgba(40, 40, 40, 0.85)',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
-                }}
-              >
-                {filteredAvatars.map((avatar) => (
-                  <button
-                    key={avatar.id}
-                    onClick={() => handleMentionSelect(avatar.username)}
-                    className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/15 transition-colors flex items-center gap-3"
-                  >
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 flex-shrink-0">
-                      <img
-                        src={avatar.image}
-                        alt={avatar.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm text-white font-semibold">{avatar.username}</span>
-                      <span className="text-xs text-white/60">{avatar.name}</span>
-                    </div>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Auto-complete suggestions */}
-          <AnimatePresence>
-            {suggestions.length > 0 && !showMentionSuggestions && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full mt-1.5 w-full vibrancy-material rounded-xl p-1.5 z-10"
-              >
-                {suggestions.map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      setPrompt(suggestion)
-                      setSuggestions([])
-                    }}
-                    className="w-full text-left px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors text-xs text-white"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Identity dropdown and Generate button row */}
-        <div className="flex items-center justify-between gap-3">
-          {/* Identity Dropdown or Upload Button */}
-          <div className="relative">
-            {hasIdentity ? (
+          {/* Revert and Send buttons inside textarea */}
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            {hasGenerated && onRevert && (
               <button
-                onClick={() => setShowIdentityDropdown(!showIdentityDropdown)}
-                className="ios-button-secondary px-4 py-2.5 text-sm flex items-center gap-2"
+                onClick={onRevert}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 transition-all flex items-center justify-center"
+                title="Revert to element selection"
               >
-                {identityImage && (
-                  <div className="w-6 h-6 rounded-full overflow-hidden border border-white/50">
-                    <img
-                      src={identityImage}
-                      alt="Identity"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <span className="text-white">{getCurrentIdentityName()}</span>
-                <ChevronDown className="w-4 h-4 text-white" />
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                </svg>
               </button>
-            ) : (
-              <motion.button
-                onClick={() => fileInputRef.current?.click()}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="ios-button-secondary px-4 py-2.5 text-sm flex items-center gap-2"
-              >
-                <Upload className="w-4 h-4 text-white" />
-                <span className="text-white">Upload Photo</span>
-              </motion.button>
             )}
-
-            <AnimatePresence>
-              {showIdentityDropdown && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute left-0 bottom-full mb-2 w-72 glass-card rounded-2xl p-2 z-50"
-                >
-                  {savedIdentities.length > 0 && (
-                    <>
-                      {savedIdentities.map((identity) => (
-                        <div
-                          key={identity.id}
-                          className="group relative w-full rounded-xl hover:bg-white/10 transition-colors"
-                        >
-                          {editingId === identity.id ? (
-                            <div className="px-4 py-3 flex items-center gap-2">
-                              <input
-                                type="text"
-                                value={editingName}
-                                onChange={(e) => setEditingName(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    handleRename(identity.id, editingName)
-                                  } else if (e.key === 'Escape') {
-                                    setEditingId(null)
-                                  }
-                                }}
-                                className="ios-input flex-1 px-2 py-1 text-white text-sm"
-                                autoFocus
-                              />
-                              <button
-                                onClick={() => handleRename(identity.id, editingName)}
-                                className="text-white/70 hover:text-white text-xs"
-                              >
-                                Save
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => {
-                                // Update prompt to replace old identity mention with new one
-                                if (identityName) {
-                                  const oldMention = `@${identityName}`
-                                  const newMention = `@${identity.name}`
-                                  const updatedPrompt = prompt.replace(new RegExp(oldMention, 'g'), newMention)
-                                  setPrompt(updatedPrompt)
-                                }
-
-                                // Update identity
-                                if (onIdentityChange) onIdentityChange(identity.id)
-                                if (onImageChange) onImageChange(identity.image)
-                                if (onIdentityNameChange) onIdentityNameChange(identity.name)
-                                setShowIdentityDropdown(false)
-                              }}
-                              className="w-full text-left px-4 py-3 flex items-center gap-3"
-                            >
-                              <img
-                                src={identity.image}
-                                alt={identity.name}
-                                className="w-8 h-8 rounded-full object-cover border border-white/20"
-                              />
-                              <div className="flex-1 flex items-center gap-2">
-                                <span className="text-white text-sm">{identity.name}</span>
-                                {identity.isPrimary && (
-                                  <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setEditingId(identity.id)
-                                    setEditingName(identity.name)
-                                  }}
-                                  className="p-1 rounded hover:bg-white/20"
-                                  title="Rename"
-                                >
-                                  <Edit2 className="w-3 h-3 text-white/70" />
-                                </button>
-                                {!identity.isPrimary && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      handleSetPrimary(identity.id)
-                                    }}
-                                    className="p-1 rounded hover:bg-white/20"
-                                    title="Set as Primary"
-                                  >
-                                    <Star className="w-3 h-3 text-white/70" />
-                                  </button>
-                                )}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleDelete(identity.id)
-                                  }}
-                                  className="p-1 rounded hover:bg-white/20"
-                                  title="Delete"
-                                >
-                                  <Trash2 className="w-3 h-3 text-white/70" />
-                                </button>
-                              </div>
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                      <div className="border-t border-white/10 my-2" />
-                    </>
-                  )}
-                  <button
-                    onClick={() => {
-                      fileInputRef.current?.click()
-                      setShowIdentityDropdown(false)
-                    }}
-                    className="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-white/70 flex items-center gap-2"
-                  >
-                    <Upload className="w-4 h-4" />
-                    <span>New Identity</span>
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <button
+              onClick={handleSendClick}
+              disabled={isGenerating || !prompt.trim() || !hasIdentity}
+              className="w-9 h-9 rounded-full bg-white hover:bg-white/90 disabled:bg-white/30 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+            >
+              <Send className="w-4 h-4 text-purple-600" />
+            </button>
           </div>
-
-          {/* Generate Button */}
-          <button
-            onClick={handleGenerate}
-            disabled={isGenerating || !prompt.trim()}
-            className="ios-button px-6 py-3 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed gap-2"
-          >
-            <Sparkles className="w-5 h-5 text-black" />
-            <span className="text-sm font-semibold text-black">Generate</span>
-          </button>
         </div>
-
-        {/* Hidden file input for image upload */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/jpg"
-          onChange={handleFileUpload}
-          className="hidden"
-        />
       </div>
+
+      {/* Upload Identity Button (if no identity) */}
+      {!hasIdentity && (
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="ios-button-secondary px-4 py-3 text-sm flex items-center justify-center gap-2"
+        >
+          <Upload className="w-4 h-4 text-white" />
+          <span className="text-white">Upload Your Photo</span>
+        </button>
+      )}
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/jpg"
+        onChange={handleFileUpload}
+        className="hidden"
+      />
 
       {/* Location panel */}
       <LocationPanel
         isOpen={showLocationPanel}
         onClose={() => setShowLocationPanel(false)}
-        onSelect={handleLocationSelect}
+        onSelect={(loc) => {
+          handleLocationSelect(loc)
+          setShowLocationPanel(false)
+        }}
         customLocations={customLocations}
         onAddCustomLocation={handleAddCustomLocation}
       />
@@ -802,16 +800,19 @@ export default function CreationSection({
       <OutfitPanel
         isOpen={showOutfitPanel}
         onClose={() => setShowOutfitPanel(false)}
-        onSelect={handleOutfitSelect}
+        onSelect={(outfit) => {
+          handleOutfitSelect(outfit)
+          setShowOutfitPanel(false)
+        }}
       />
 
-      {/* Ideas panel */}
-      <IdeasPanel
-        isOpen={showIdeasPanel}
-        onClose={() => setShowIdeasPanel(false)}
-        onSelect={handleIdeaSelect}
+      {/* Steal Elements panel */}
+      <StealElementsPanel
+        isOpen={showStealElementsPanel}
+        onClose={() => setShowStealElementsPanel(false)}
+        onSaveLocation={handleSaveStealLocation}
+        onSaveOutfit={handleSaveStealOutfit}
       />
     </div>
   )
 }
-
