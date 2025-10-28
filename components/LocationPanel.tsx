@@ -92,10 +92,10 @@ export default function LocationPanel({
               {/* Header */}
               <div className="px-6 pb-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-white">Choose Location</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">Choose Location</h2>
                   <button
                     onClick={onClose}
-                    className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                    className="p-2 rounded-full hover:bg-gray-200/50 transition-colors"
                   >
                     <X className="w-5 h-5 text-white/70" />
                   </button>
@@ -109,7 +109,7 @@ export default function LocationPanel({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search location..."
-                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-white placeholder:text-white/40"
+                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
                   />
                 </div>
               </div>
@@ -123,7 +123,7 @@ export default function LocationPanel({
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       onClick={() => setShowUploadDialog(true)}
-                      className="group relative aspect-square rounded-xl overflow-hidden active:scale-95 transition-transform duration-200 bg-white/10 backdrop-blur-sm border-2 border-dashed border-white/30 hover:border-white/50 flex items-center justify-center"
+                      className="group relative aspect-square rounded-xl overflow-hidden active:scale-95 transition-transform duration-200 bg-gray-200/50 backdrop-blur-sm border-2 border-dashed border-gray-400 hover:border-white/50 flex items-center justify-center"
                     >
                       <div className="flex flex-col items-center gap-2">
                         <Plus className="w-6 h-6 text-white/70" />
@@ -156,7 +156,7 @@ export default function LocationPanel({
 
                       {/* Text content */}
                       <div className="absolute bottom-0 left-0 right-0 p-2">
-                        <p className="text-white font-semibold text-xs leading-tight drop-shadow-lg line-clamp-2">
+                        <p className="text-gray-900 font-semibold text-xs leading-tight drop-shadow-lg line-clamp-2">
                           {location.name}
                         </p>
                         <p className="text-white/60 text-[10px] mt-0.5 line-clamp-1">
@@ -197,10 +197,10 @@ export default function LocationPanel({
                     className="glass-card rounded-2xl p-6 w-full max-w-sm pointer-events-auto"
                   >
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-white">Upload Custom Location</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Upload Custom Location</h3>
                     <button
                       onClick={() => setShowUploadDialog(false)}
-                      className="p-1 rounded-full hover:bg-white/10 transition-colors"
+                      className="p-1 rounded-full hover:bg-gray-200/50 transition-colors"
                     >
                       <X className="w-5 h-5 text-white/70" />
                     </button>
@@ -219,13 +219,13 @@ export default function LocationPanel({
                           onClick={() => setCustomImage(null)}
                           className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
                         >
-                          <X className="w-4 h-4 text-white" />
+                          <X className="w-4 h-4 text-gray-900" />
                         </button>
                       </div>
                     ) : (
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full aspect-video rounded-xl border-2 border-dashed border-white/30 hover:border-white/50 bg-white/5 flex flex-col items-center justify-center gap-2 transition-colors"
+                        className="w-full aspect-video rounded-xl border-2 border-dashed border-gray-400 hover:border-white/50 bg-gray-100 flex flex-col items-center justify-center gap-2 transition-colors"
                       >
                         <Upload className="w-8 h-8 text-white/50" />
                         <p className="text-white/50 text-sm">Upload Image</p>
@@ -248,7 +248,7 @@ export default function LocationPanel({
                       value={customName}
                       onChange={(e) => setCustomName(e.target.value)}
                       placeholder="e.g., My Favorite Beach"
-                      className="ios-input w-full px-4 py-2.5 text-sm text-white placeholder:text-white/40"
+                      className="ios-input w-full px-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
                     />
                   </div>
 
@@ -260,7 +260,7 @@ export default function LocationPanel({
                       value={customCity}
                       onChange={(e) => setCustomCity(e.target.value)}
                       placeholder="e.g., Malibu"
-                      className="ios-input w-full px-4 py-2.5 text-sm text-white placeholder:text-white/40"
+                      className="ios-input w-full px-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
                     />
                   </div>
 

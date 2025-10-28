@@ -147,32 +147,32 @@ export default function StealElementsPanel({
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-[#1a1a1a]/95 backdrop-blur-2xl rounded-t-[40px] p-6 w-full h-[85vh] overflow-y-auto shadow-2xl border-t border-white/10"
+              className="bg-white/95 backdrop-blur-2xl rounded-t-[40px] p-6 w-full h-[85vh] overflow-y-auto shadow-2xl border-t border-gray-200"
               style={{
                 maxHeight: 'calc(100vh - 60px)',
               }}
             >
               {/* Drag handle */}
               <div className="flex justify-center mb-4">
-                <div className="w-10 h-1 bg-white/30 rounded-full" />
+                <div className="w-10 h-1 bg-gray-300 rounded-full" />
               </div>
 
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-white">Steal Elements</h2>
-                    <p className="text-sm text-white/60">Upload a photo to extract location, outfit & pose</p>
+                    <h2 className="text-xl font-semibold text-gray-900">Steal Elements</h2>
+                    <p className="text-sm text-gray-500">Upload a photo to extract location, outfit & pose</p>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                  className="p-2 rounded-full hover:bg-gray-200/50 transition-colors"
                 >
-                  <X className="w-5 h-5 text-white/70" />
+                  <X className="w-5 h-5 text-gray-600" />
                 </button>
               </div>
 
@@ -180,12 +180,12 @@ export default function StealElementsPanel({
               {!uploadedImage ? (
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full aspect-video rounded-2xl border-2 border-dashed border-white/30 hover:border-white/50 bg-white/5 flex flex-col items-center justify-center gap-3 transition-all hover:bg-white/10"
+                  className="w-full aspect-video rounded-2xl border-2 border-dashed border-gray-400 hover:border-blue-400 bg-gray-50 flex flex-col items-center justify-center gap-3 transition-all hover:bg-gray-100"
                 >
-                  <Camera className="w-12 h-12 text-white/50" />
+                  <Camera className="w-12 h-12 text-gray-400" />
                   <div className="text-center">
-                    <p className="text-white font-medium">Upload Image</p>
-                    <p className="text-white/50 text-sm">Click to select a photo to analyze</p>
+                    <p className="text-gray-900 font-medium">Upload Image</p>
+                    <p className="text-gray-500 text-sm">Click to select a photo to analyze</p>
                   </div>
                 </button>
               ) : (
@@ -199,17 +199,17 @@ export default function StealElementsPanel({
                     />
                     <button
                       onClick={handleReset}
-                      className="absolute top-3 right-3 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
+                      className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white transition-colors"
                     >
-                      <X className="w-4 h-4 text-white" />
+                      <X className="w-4 h-4 text-gray-900" />
                     </button>
                   </div>
 
                   {/* Analyzing State */}
                   {isAnalyzing && (
                     <div className="flex items-center justify-center gap-3 py-8">
-                      <div className="w-6 h-6 border-3 border-purple-500 border-t-transparent rounded-full animate-spin" />
-                      <p className="text-white">Analyzing image with AI...</p>
+                      <div className="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                      <p className="text-gray-900">Analyzing image with AI...</p>
                     </div>
                   )}
 
@@ -224,61 +224,61 @@ export default function StealElementsPanel({
                   {analysisResult && !isAnalyzing && (
                     <div className="space-y-4">
                       {/* Location */}
-                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="p-4 rounded-xl bg-white border border-gray-200">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
-                            <MapPin className="w-5 h-5 text-blue-400" />
-                            <h3 className="text-white font-semibold">Location</h3>
+                            <MapPin className="w-5 h-5 text-blue-500" />
+                            <h3 className="text-gray-900 font-semibold">Location</h3>
                           </div>
                           <button
                             onClick={handleSaveLocation}
-                            className="px-3 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-sm font-medium transition-colors"
+                            className="px-3 py-1.5 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 text-sm font-medium transition-colors"
                           >
                             Save to Locations
                           </button>
                         </div>
-                        <p className="text-white font-medium mb-1">{analysisResult.location.name}</p>
-                        <p className="text-white/60 text-sm mb-2">{analysisResult.location.description}</p>
+                        <p className="text-gray-900 font-medium mb-1">{analysisResult.location.name}</p>
+                        <p className="text-gray-600 text-sm mb-2">{analysisResult.location.description}</p>
                         <div className="flex gap-2 text-xs">
-                          <span className="px-2 py-1 rounded bg-white/10 text-white/70">{analysisResult.location.setting}</span>
-                          <span className="px-2 py-1 rounded bg-white/10 text-white/70">{analysisResult.location.atmosphere}</span>
+                          <span className="px-2 py-1 rounded bg-gray-100 text-gray-700">{analysisResult.location.setting}</span>
+                          <span className="px-2 py-1 rounded bg-gray-100 text-gray-700">{analysisResult.location.atmosphere}</span>
                         </div>
                       </div>
 
                       {/* Outfit */}
-                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="p-4 rounded-xl bg-white border border-gray-200">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 text-pink-400" />
-                            <h3 className="text-white font-semibold">Outfit</h3>
+                            <Sparkles className="w-5 h-5 text-pink-500" />
+                            <h3 className="text-gray-900 font-semibold">Outfit</h3>
                           </div>
                           <button
                             onClick={handleSaveOutfit}
-                            className="px-3 py-1.5 rounded-lg bg-pink-500/20 hover:bg-pink-500/30 text-pink-400 text-sm font-medium transition-colors"
+                            className="px-3 py-1.5 rounded-lg bg-pink-500/20 hover:bg-pink-500/30 text-pink-600 text-sm font-medium transition-colors"
                           >
                             Save to Outfits
                           </button>
                         </div>
-                        <p className="text-white font-medium mb-1">{analysisResult.outfit.name}</p>
-                        <p className="text-white/60 text-sm mb-2">{analysisResult.outfit.description}</p>
+                        <p className="text-gray-900 font-medium mb-1">{analysisResult.outfit.name}</p>
+                        <p className="text-gray-600 text-sm mb-2">{analysisResult.outfit.description}</p>
                         <div className="flex gap-2 text-xs flex-wrap">
-                          <span className="px-2 py-1 rounded bg-white/10 text-white/70">{analysisResult.outfit.style}</span>
+                          <span className="px-2 py-1 rounded bg-gray-100 text-gray-700">{analysisResult.outfit.style}</span>
                           {analysisResult.outfit.colors.map((color, idx) => (
-                            <span key={idx} className="px-2 py-1 rounded bg-white/10 text-white/70">{color}</span>
+                            <span key={idx} className="px-2 py-1 rounded bg-gray-100 text-gray-700">{color}</span>
                           ))}
                         </div>
                       </div>
 
                       {/* Pose */}
-                      <div className="p-4 rounded-xl bg-white/5 border border-white/10">
+                      <div className="p-4 rounded-xl bg-white border border-gray-200">
                         <div className="flex items-center gap-2 mb-3">
-                          <Camera className="w-5 h-5 text-purple-400" />
-                          <h3 className="text-white font-semibold">Pose</h3>
+                          <Camera className="w-5 h-5 text-indigo-500" />
+                          <h3 className="text-gray-900 font-semibold">Pose</h3>
                         </div>
-                        <p className="text-white font-medium mb-1">{analysisResult.pose.name}</p>
-                        <p className="text-white/60 text-sm mb-2">{analysisResult.pose.description}</p>
+                        <p className="text-gray-900 font-medium mb-1">{analysisResult.pose.name}</p>
+                        <p className="text-gray-600 text-sm mb-2">{analysisResult.pose.description}</p>
                         <div className="flex gap-2 text-xs">
-                          <span className="px-2 py-1 rounded bg-white/10 text-white/70">Mood: {analysisResult.pose.mood}</span>
+                          <span className="px-2 py-1 rounded bg-gray-100 text-gray-700">Mood: {analysisResult.pose.mood}</span>
                         </div>
                       </div>
                     </div>

@@ -55,7 +55,7 @@ export default function ResultsSection({
         animate={{ opacity: 1, scale: 1 }}
         className="relative w-full aspect-[3/4] rounded-[3rem] overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #3d2a54 0%, #4a1d6e 50%, #5b21b6 100%)',
+          background: 'linear-gradient(135deg, #f5f5f7 0%, #ffffff 50%, #fafafa 100%)',
         }}
       >
         {/* Main swipeable image */}
@@ -91,18 +91,18 @@ export default function ResultsSection({
         {/* Download button - top right */}
         <button
           onClick={() => downloadImage(images[currentIndex], `generated-${currentIndex + 1}.jpg`)}
-          className="absolute top-6 right-6 p-3 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/30 transition-all z-10"
+          className="absolute top-6 right-6 p-3 rounded-full backdrop-blur-xl bg-gray-200/50 hover:bg-white/20 border border-gray-400 transition-all z-10"
         >
-          <Download className="w-5 h-5 text-white" />
+          <Download className="w-5 h-5 text-gray-900" />
         </button>
 
         {/* Left navigation button */}
         {currentIndex > 0 && (
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/30 transition-all z-10 active:scale-95"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full backdrop-blur-xl bg-gray-200/50 hover:bg-white/20 border border-gray-400 transition-all z-10 active:scale-95"
           >
-            <ChevronLeft className="w-6 h-6 text-white" />
+            <ChevronLeft className="w-6 h-6 text-gray-900" />
           </button>
         )}
 
@@ -110,9 +110,9 @@ export default function ResultsSection({
         {currentIndex < images.length - 1 && (
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/30 transition-all z-10 active:scale-95"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full backdrop-blur-xl bg-gray-200/50 hover:bg-white/20 border border-gray-400 transition-all z-10 active:scale-95"
           >
-            <ChevronRight className="w-6 h-6 text-white" />
+            <ChevronRight className="w-6 h-6 text-gray-900" />
           </button>
         )}
 

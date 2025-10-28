@@ -634,7 +634,7 @@ export default function CreationSection({
                   className={`flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 transition-all ${
                     selectedLocation?.name === location.name
                       ? 'border-blue-400 ring-2 ring-blue-400/50'
-                      : 'border-white/20 hover:border-white/40'
+                      : 'border-gray-300 hover:border-gray-500'
                   }`}
                 >
                   <img
@@ -650,7 +650,7 @@ export default function CreationSection({
               <div className="flex flex-col items-center gap-1">
                 <button
                   onClick={() => setShowLocationPanel(true)}
-                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-white/30 hover:border-white/50 bg-white/5 flex items-center justify-center transition-all"
+                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-gray-400 hover:border-white/50 bg-gray-100 flex items-center justify-center transition-all"
                 >
                   <Upload className="w-6 h-6 text-white/50" />
                 </button>
@@ -672,7 +672,7 @@ export default function CreationSection({
                   className={`flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 transition-all ${
                     selectedOutfit?.name === outfit.name
                       ? 'border-pink-400 ring-2 ring-pink-400/50'
-                      : 'border-white/20 hover:border-white/40'
+                      : 'border-gray-300 hover:border-gray-500'
                   }`}
                 >
                   <img
@@ -687,7 +687,7 @@ export default function CreationSection({
             <div className="flex flex-col items-center gap-1">
               <button
                 onClick={() => setShowOutfitPanel(true)}
-                className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-white/30 hover:border-white/50 bg-white/5 flex items-center justify-center transition-all"
+                className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-gray-400 hover:border-white/50 bg-gray-100 flex items-center justify-center transition-all"
               >
                 <Upload className="w-6 h-6 text-white/50" />
               </button>
@@ -708,7 +708,7 @@ export default function CreationSection({
                     className={`flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 transition-all ${
                       isSelected
                         ? 'border-blue-400 ring-2 ring-blue-400/50'
-                        : 'border-white/20 hover:border-white/40'
+                        : 'border-gray-300 hover:border-gray-500'
                     }`}
                   >
                     <img
@@ -731,7 +731,7 @@ export default function CreationSection({
               <div key={idx} className="flex flex-col items-center gap-1">
                 <button
                   onClick={() => handleEmotionClick(emotion)}
-                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-white/20 hover:border-white/40 bg-white/5 flex items-center justify-center text-3xl transition-all hover:scale-105 active:scale-95"
+                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-gray-300 hover:border-gray-500 bg-gray-100 flex items-center justify-center text-3xl transition-all hover:scale-105 active:scale-95"
                 >
                   {emotion.emoji}
                 </button>
@@ -748,7 +748,7 @@ export default function CreationSection({
               <div key={idx} className="flex flex-col items-center gap-1">
                 <button
                   onClick={() => handleActivityClick(activity)}
-                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-white/20 hover:border-white/40 bg-white/5 flex items-center justify-center text-3xl transition-all hover:scale-105 active:scale-95"
+                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-gray-300 hover:border-gray-500 bg-gray-100 flex items-center justify-center text-3xl transition-all hover:scale-105 active:scale-95"
                 >
                   {activity.emoji}
                 </button>
@@ -765,7 +765,7 @@ export default function CreationSection({
               <div key={idx} className="flex flex-col items-center gap-1">
                 <button
                   onClick={() => handlePoseClick(pose)}
-                  className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 hover:border-white/40 transition-all hover:scale-105 active:scale-95"
+                  className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-gray-300 hover:border-gray-500 transition-all hover:scale-105 active:scale-95"
                   title={pose.name}
                 >
                   <img
@@ -796,8 +796,8 @@ export default function CreationSection({
               onClick={() => setSelectedCategory(category.id)}
               className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 selectedCategory === category.id
-                  ? 'bg-white text-purple-600'
-                  : 'bg-white/10 text-white hover:bg-white/20'
+                  ? 'bg-white text-blue-600'
+                  : 'bg-gray-200/50 text-gray-900 hover:bg-white/20'
               }`}
             >
               {category.label}
@@ -808,7 +808,7 @@ export default function CreationSection({
         {/* Steal Elements Button */}
         <button
           onClick={() => setShowStealElementsPanel(true)}
-          className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
           title="Steal Elements from Photo"
         >
           <Scissors className="w-5 h-5 text-white" />
@@ -822,7 +822,7 @@ export default function CreationSection({
           onClick={() => handleScroll('left')}
           className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-all"
         >
-          <ChevronLeft className="w-5 h-5 text-white" />
+          <ChevronLeft className="w-5 h-5 text-gray-900" />
         </button>
 
         {/* Scrollable content */}
@@ -839,7 +839,7 @@ export default function CreationSection({
           onClick={() => handleScroll('right')}
           className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-all"
         >
-          <ChevronRight className="w-5 h-5 text-white" />
+          <ChevronRight className="w-5 h-5 text-gray-900" />
         </button>
       </div>
 
@@ -850,7 +850,7 @@ export default function CreationSection({
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowIdentityDropdown(!showIdentityDropdown)}
-              className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 hover:border-white/50 transition-all relative group"
+              className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-gray-400 hover:border-white/50 transition-all relative group"
               title="Switch identity"
             >
               <img
@@ -859,7 +859,7 @@ export default function CreationSection({
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
-                <ChevronDown className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ChevronDown className="w-4 h-4 text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
             </button>
 
@@ -871,7 +871,7 @@ export default function CreationSection({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 bottom-full mb-2 w-64 bg-[#2a1f3d] rounded-2xl shadow-2xl border border-white/20 overflow-hidden z-50"
+                  className="absolute left-0 bottom-full mb-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-300 overflow-hidden z-50"
                 >
                   <div className="p-2 max-h-80 overflow-y-auto">
                     {/* Add New Identity */}
@@ -880,40 +880,40 @@ export default function CreationSection({
                         fileInputRef.current?.click()
                         setShowIdentityDropdown(false)
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition-all"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-200/50 transition-all"
                     >
-                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border-2 border-dashed border-white/30">
+                      <div className="w-10 h-10 rounded-full bg-gray-200/50 flex items-center justify-center border-2 border-dashed border-gray-400">
                         <Upload className="w-5 h-5 text-white/60" />
                       </div>
-                      <span className="text-white font-medium">Add New Identity</span>
+                      <span className="text-gray-900 font-medium">Add New Identity</span>
                     </button>
 
                     {savedIdentities.length > 0 && (
-                      <div className="my-2 h-px bg-white/10" />
+                      <div className="my-2 h-px bg-gray-200/50" />
                     )}
 
                     {/* Saved Identities */}
                     {savedIdentities.map((identity) => (
                       <div
                         key={identity.id}
-                        className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition-all group"
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-200/50 transition-all group"
                       >
                         <button
                           onClick={() => handleSwitchIdentity(identity)}
                           className="flex items-center gap-3 flex-1"
                         >
-                          <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white/30">
+                          <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-gray-400">
                             <img
                               src={identity.image}
                               alt={identity.name}
                               className="w-full h-full object-cover"
                             />
                             {currentIdentity === identity.id && (
-                              <div className="absolute inset-0 bg-purple-500/20 border-2 border-purple-400" />
+                              <div className="absolute inset-0 bg-blue-500/20 border-2 border-blue-400" />
                             )}
                           </div>
                           <div className="flex-1 text-left">
-                            <div className="text-white font-medium text-sm">{identity.name}</div>
+                            <div className="text-gray-900 font-medium text-sm">{identity.name}</div>
                             {identity.isPrimary && (
                               <div className="text-white/40 text-xs">Primary</div>
                             )}
@@ -926,7 +926,7 @@ export default function CreationSection({
                                 e.stopPropagation()
                                 handleSetPrimary(identity.id)
                               }}
-                              className="p-1 hover:bg-white/10 rounded-lg"
+                              className="p-1 hover:bg-gray-200/50 rounded-lg"
                               title="Set as primary"
                             >
                               <Star className="w-4 h-4 text-white/60" />
@@ -959,7 +959,7 @@ export default function CreationSection({
             value={prompt}
             onChange={(e) => handlePromptChange(e.target.value)}
             placeholder="Describe a Genmoji"
-            className="ios-input w-full h-14 px-4 py-3 pr-14 text-white resize-none placeholder:text-white/40 text-sm rounded-2xl"
+            className="ios-input w-full h-14 px-4 py-3 pr-14 text-gray-900 resize-none placeholder:text-white/40 text-sm rounded-2xl"
             disabled={isGenerating}
             rows={1}
           />
@@ -969,10 +969,10 @@ export default function CreationSection({
             {hasGenerated && onRevert && (
               <button
                 onClick={onRevert}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/30 transition-all flex items-center justify-center"
+                className="w-9 h-9 rounded-full bg-gray-200/50 hover:bg-white/20 border border-gray-400 transition-all flex items-center justify-center"
                 title="Revert to element selection"
               >
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                 </svg>
               </button>
@@ -982,7 +982,7 @@ export default function CreationSection({
               disabled={isGenerating || !prompt.trim() || !hasIdentity}
               className="w-9 h-9 rounded-full bg-white hover:bg-white/90 disabled:bg-white/30 disabled:cursor-not-allowed transition-all flex items-center justify-center"
             >
-              <Send className="w-4 h-4 text-purple-600" />
+              <Send className="w-4 h-4 text-blue-600" />
             </button>
           </div>
         </div>
@@ -994,8 +994,8 @@ export default function CreationSection({
           onClick={() => fileInputRef.current?.click()}
           className="ios-button-secondary px-4 py-3 text-sm flex items-center justify-center gap-2"
         >
-          <Upload className="w-4 h-4 text-white" />
-          <span className="text-white">Upload Your Photo</span>
+          <Upload className="w-4 h-4 text-gray-900" />
+          <span className="text-gray-900">Upload Your Photo</span>
         </button>
       )}
 

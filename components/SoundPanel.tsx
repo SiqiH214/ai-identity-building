@@ -83,7 +83,7 @@ export default function SoundPanel({
                       >
                         <div className={`p-3 rounded-full ${
                           selectedSound === sound.name
-                            ? 'bg-warm-gray-900 text-white'
+                            ? 'bg-warm-gray-900 text-gray-900'
                             : 'bg-warm-gray-100 text-warm-gray-600'
                         }`}>
                           <Icon className="w-5 h-5" />

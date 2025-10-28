@@ -54,10 +54,10 @@ export default function OutfitPanel({
               {/* Header */}
               <div className="px-6 pb-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-white">Choose Outfit</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">Choose Outfit</h2>
                   <button
                     onClick={onClose}
-                    className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                    className="p-2 rounded-full hover:bg-gray-200/50 transition-colors"
                   >
                     <X className="w-5 h-5 text-white/70" />
                   </button>
@@ -71,7 +71,7 @@ export default function OutfitPanel({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search outfits..."
-                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-white placeholder:text-white/40"
+                    className="ios-input w-full pl-11 pr-4 py-2.5 text-sm text-gray-900 placeholder:text-white/40"
                   />
                 </div>
               </div>
@@ -103,7 +103,7 @@ export default function OutfitPanel({
 
                       {/* Text content - overlay at bottom */}
                       <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <p className="text-white font-bold text-sm leading-tight drop-shadow-lg">
+                        <p className="text-gray-900 font-bold text-sm leading-tight drop-shadow-lg">
                           {outfit.name}
                         </p>
                         <p className="text-white/70 text-xs mt-1">

@@ -156,10 +156,10 @@ export default function IdentitySection({
         <select
           value={selectedCity}
           onChange={(e) => onCityChange?.(e.target.value as City)}
-          className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="px-3 py-1 rounded-full text-xs font-medium bg-gray-200/50 text-gray-900 backdrop-blur-md border border-gray-300 hover:bg-white/20 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30"
         >
           {CITIES.map((city) => (
-            <option key={city} value={city} className="bg-purple-900 text-white">
+            <option key={city} value={city} className="bg-white text-gray-900">
               {city}
             </option>
           ))}
@@ -223,7 +223,7 @@ export default function IdentitySection({
               return (
                 <motion.div
                   key={element.id}
-                  className="absolute rounded-full backdrop-blur-md border border-white/30 overflow-hidden"
+                  className="absolute rounded-full backdrop-blur-md border border-gray-400 overflow-hidden"
                   style={{
                     width: 70,
                     height: 70,
@@ -261,8 +261,8 @@ export default function IdentitySection({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-                        <MapPin className="w-8 h-8 text-white/70" />
+                      <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-cyan-500/30 flex items-center justify-center">
+                        <MapPin className="w-8 h-8 text-gray-600" />
                       </div>
                     )
                   ) : element.type === 'outfit' ? (
@@ -274,12 +274,12 @@ export default function IdentitySection({
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
-                        <Sparkles className="w-8 h-8 text-white/70" />
+                        <Sparkles className="w-8 h-8 text-gray-600" />
                       </div>
                     )
                   ) : element.type === 'emotion' || element.type === 'activity' ? (
                     element.data && 'emoji' in element.data ? (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center text-3xl">
+                      <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-3xl">
                         {element.data.emoji}
                       </div>
                     ) : null
@@ -342,7 +342,7 @@ export default function IdentitySection({
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-              className="relative z-0 w-56 h-56 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
+              className="relative z-0 w-56 h-56 rounded-full overflow-hidden border-4 border-gray-300 shadow-2xl"
               style={{
                 filter: 'blur(1px)',
                 boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.1)',
@@ -367,7 +367,7 @@ export default function IdentitySection({
               }}
               className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
             >
-              <p className="text-lg font-semibold text-white mb-1">Generating images...</p>
+              <p className="text-lg font-semibold text-gray-900 mb-1">Generating images...</p>
               <p className="text-sm text-white/60">This may take a moment</p>
             </motion.div>
           </div>
@@ -443,7 +443,7 @@ export default function IdentitySection({
                     y: { duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
                     x: { duration: 4.5 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
                   }}
-                  className="absolute rounded-full backdrop-blur-md border border-white/30 overflow-visible"
+                  className="absolute rounded-full backdrop-blur-md border border-gray-400 overflow-visible"
                   style={{
                     width: 70,
                     height: 70,
@@ -457,7 +457,7 @@ export default function IdentitySection({
                     onClick={() => handleRemoveElement(element.id)}
                     className="absolute -top-1 -right-1 z-10 w-5 h-5 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-all shadow-lg"
                   >
-                    <X className="w-3 h-3 text-white" />
+                    <X className="w-3 h-3 text-gray-900" />
                   </button>
 
                   <div className="w-full h-full rounded-full overflow-hidden">
@@ -475,8 +475,8 @@ export default function IdentitySection({
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-                          <MapPin className="w-8 h-8 text-white/70" />
+                        <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-cyan-500/30 flex items-center justify-center">
+                          <MapPin className="w-8 h-8 text-gray-600" />
                         </div>
                       )
                     ) : element.type === 'outfit' ? (
@@ -488,12 +488,12 @@ export default function IdentitySection({
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
-                          <Sparkles className="w-8 h-8 text-white/70" />
+                          <Sparkles className="w-8 h-8 text-gray-600" />
                         </div>
                       )
                     ) : element.type === 'emotion' || element.type === 'activity' ? (
                       element.data && 'emoji' in element.data ? (
-                        <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center text-3xl">
+                        <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-3xl">
                           {element.data.emoji}
                         </div>
                       ) : null
@@ -565,7 +565,7 @@ export default function IdentitySection({
               transition={{
                 scale: { duration: 0.4, ease: "easeOut" }
               }}
-              className="relative z-0 w-56 h-56 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
+              className="relative z-0 w-56 h-56 rounded-full overflow-hidden border-4 border-gray-300 shadow-2xl"
               style={{
                 boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.1)',
               }}
@@ -646,14 +646,14 @@ export default function IdentitySection({
               />
               <User className="w-24 h-24 mb-4 relative z-10" />
             </div>
-            <p className="text-lg font-medium text-white">No photo yet</p>
+            <p className="text-lg font-medium text-gray-900">No photo yet</p>
             <p className="text-sm text-white/40 mt-2">Tap to upload your identity</p>
 
             {/* Upload button */}
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="mt-6 px-8 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold shadow-lg"
+              className="mt-6 px-8 py-3 rounded-full bg-gray-200/50 backdrop-blur-md border border-gray-300 text-gray-900 font-semibold shadow-lg"
             >
               <div className="flex items-center gap-2">
                 <Upload className="w-5 h-5" />
