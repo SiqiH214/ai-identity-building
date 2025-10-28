@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@supabase/supabase-js": "^2.76.1",
     "@vercel/blob": "^2.0.0",
     "@vercel/speed-insights": "^1.2.0",
     "framer-motion": "^10.16.4",
