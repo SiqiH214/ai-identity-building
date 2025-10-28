@@ -147,21 +147,10 @@ export default function CreationSection({
       setPrompt(initialPrompt)
       setHasInitializedPrompt(true)
 
-      // Add identity to selected elements on canvas
-      if (onElementsChange) {
-        onElementsChange([{
-          id: 'self-identity',
-          type: 'identity',
-          data: {
-            id: 'self-identity',
-            name: identityName,
-            username: `@${identityName}`,
-            image: identityImage
-          }
-        }])
-      }
+      // Don't add identity to selected elements - this causes the blank bubble
+      // The user's identity should not appear as a bubble on the canvas
     }
-  }, [identityImage, identityName, hasInitializedPrompt, prompt, onElementsChange])
+  }, [identityImage, identityName, hasInitializedPrompt, prompt])
 
   // Auto-generation timer: trigger generation 2s after user stops interacting
   const resetAutoGenerateTimer = () => {
@@ -281,6 +270,20 @@ export default function CreationSection({
     if (onIdentityChange) onIdentityChange(identity.id)
     if (onImageChange) onImageChange(identity.image)
     if (onIdentityNameChange) onIdentityNameChange(identity.name)
+
+    // Update prompt to reflect new identity name
+    // Replace old @identity mention with new one
+    const oldMention = `@${identityName}`
+    const newMention = `@${identity.name}`
+
+    if (prompt.includes(oldMention)) {
+      const updatedPrompt = prompt.replace(new RegExp(`@${identityName}\\b`, 'g'), newMention)
+      setPrompt(updatedPrompt)
+    } else if (!prompt.trim()) {
+      // If prompt is empty, initialize with new identity name
+      setPrompt(`${newMention} `)
+    }
+
     setShowIdentityDropdown(false)
   }
 
