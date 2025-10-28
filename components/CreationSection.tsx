@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, MapPin, Sparkles, Upload, ChevronLeft, ChevronRight, Scissors } from 'lucide-react'
+import { Send, MapPin, Sparkles, Upload, ChevronLeft, ChevronRight, Scissors, ChevronDown, User, Star } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import LocationPanel from './LocationPanel'
 import OutfitPanel from './OutfitPanel'
@@ -72,10 +72,42 @@ export default function CreationSection({
   const [customLocations, setCustomLocations] = useState<Array<{ name: string; image: string; city: string }>>([])
   const [customOutfits, setCustomOutfits] = useState<Array<{ name: string; image: string; category: string }>>([])
   const [hasInitializedPrompt, setHasInitializedPrompt] = useState(false)
+  const [savedIdentities, setSavedIdentities] = useState<Array<{ id: string; name: string; image: string; isPrimary: boolean }>>([])
+  const [showIdentityDropdown, setShowIdentityDropdown] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const autoGenerateTimerRef = useRef<NodeJS.Timeout | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Load saved identities from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('savedIdentities')
+    if (saved) {
+      try {
+        setSavedIdentities(JSON.parse(saved))
+      } catch (e) {
+        console.error('Failed to parse saved identities:', e)
+      }
+    }
+  }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowIdentityDropdown(false)
+      }
+    }
+
+    if (showIdentityDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showIdentityDropdown])
 
   // Fetch custom locations and outfits from cloud on mount
   useEffect(() => {
@@ -167,15 +199,49 @@ export default function CreationSection({
     const reader = new FileReader()
     reader.onloadend = () => {
       const base64 = reader.result as string
-      const newId = Date.now().toString()
-      const defaultName = `Identity`
+
+      // Prompt user for identity name
+      const name = prompt('Name this identity:', 'My Identity')
+      if (!name) return
+
+      const newId = `identity-${Date.now()}`
+
+      const newIdentity = {
+        id: newId,
+        name,
+        image: base64,
+        isPrimary: savedIdentities.length === 0, // First one is primary
+      }
+
+      const updatedIdentities = [...savedIdentities, newIdentity]
+      setSavedIdentities(updatedIdentities)
+      localStorage.setItem('savedIdentities', JSON.stringify(updatedIdentities))
 
       // Set as current identity
       if (onIdentityChange) onIdentityChange(newId)
       if (onImageChange) onImageChange(base64)
-      if (onIdentityNameChange) onIdentityNameChange(defaultName)
+      if (onIdentityNameChange) onIdentityNameChange(name)
+
+      // Clear the file input so the same file can be selected again
+      e.target.value = ''
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleSwitchIdentity = (identity: { id: string; name: string; image: string }) => {
+    if (onIdentityChange) onIdentityChange(identity.id)
+    if (onImageChange) onImageChange(identity.image)
+    if (onIdentityNameChange) onIdentityNameChange(identity.name)
+    setShowIdentityDropdown(false)
+  }
+
+  const handleSetPrimary = (id: string) => {
+    const updatedIdentities = savedIdentities.map(identity => ({
+      ...identity,
+      isPrimary: identity.id === id,
+    }))
+    setSavedIdentities(updatedIdentities)
+    localStorage.setItem('savedIdentities', JSON.stringify(updatedIdentities))
   }
 
   const handlePromptChange = (value: string) => {
@@ -713,19 +779,96 @@ export default function CreationSection({
 
       {/* Prompt Input with Identity Avatar and Send Button */}
       <div className="relative flex items-center gap-2">
-        {/* Identity Avatar (left side) */}
+        {/* Identity Avatar with Dropdown (left side) */}
         {hasIdentity && identityImage && (
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 hover:border-white/50 transition-all"
-            title="Change identity"
-          >
-            <img
-              src={identityImage}
-              alt="Your identity"
-              className="w-full h-full object-cover"
-            />
-          </button>
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setShowIdentityDropdown(!showIdentityDropdown)}
+              className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 hover:border-white/50 transition-all relative group"
+              title="Switch identity"
+            >
+              <img
+                src={identityImage}
+                alt="Your identity"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
+                <ChevronDown className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </button>
+
+            {/* Identity Dropdown Menu */}
+            <AnimatePresence>
+              {showIdentityDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 bottom-full mb-2 w-64 bg-[#2a1f3d] rounded-2xl shadow-2xl border border-white/20 overflow-hidden z-50"
+                >
+                  <div className="p-2 max-h-80 overflow-y-auto">
+                    {/* Add New Identity */}
+                    <button
+                      onClick={() => {
+                        fileInputRef.current?.click()
+                        setShowIdentityDropdown(false)
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition-all"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border-2 border-dashed border-white/30">
+                        <Upload className="w-5 h-5 text-white/60" />
+                      </div>
+                      <span className="text-white font-medium">Add New Identity</span>
+                    </button>
+
+                    {savedIdentities.length > 0 && (
+                      <div className="my-2 h-px bg-white/10" />
+                    )}
+
+                    {/* Saved Identities */}
+                    {savedIdentities.map((identity) => (
+                      <div
+                        key={identity.id}
+                        className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/10 transition-all group"
+                      >
+                        <button
+                          onClick={() => handleSwitchIdentity(identity)}
+                          className="flex items-center gap-3 flex-1"
+                        >
+                          <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-white/30">
+                            <img
+                              src={identity.image}
+                              alt={identity.name}
+                              className="w-full h-full object-cover"
+                            />
+                            {currentIdentity === identity.id && (
+                              <div className="absolute inset-0 bg-purple-500/20 border-2 border-purple-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 text-left">
+                            <div className="text-white font-medium text-sm">{identity.name}</div>
+                            {identity.isPrimary && (
+                              <div className="text-white/40 text-xs">Primary</div>
+                            )}
+                          </div>
+                        </button>
+                        {!identity.isPrimary && (
+                          <button
+                            onClick={() => handleSetPrimary(identity.id)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/10 rounded-lg"
+                            title="Set as primary"
+                          >
+                            <Star className="w-4 h-4 text-white/60" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         )}
 
         {/* Prompt textarea */}
