@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { put } from '@vercel/blob'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 // GET: Fetch all custom outfits
 export async function GET(request: NextRequest) {
   try {
+    // Return empty array if Supabase is not configured
+    if (!isSupabaseConfigured || !supabase) {
+      console.log('Supabase not configured, returning empty outfits array')
+      return NextResponse.json({ success: true, outfits: [] })
+    }
+
     const { data, error } = await supabase
       .from('custom_outfits')
       .select('*')
@@ -27,6 +33,14 @@ export async function GET(request: NextRequest) {
 // POST: Save a new custom outfit
 export async function POST(request: NextRequest) {
   try {
+    // Return error if Supabase is not configured
+    if (!isSupabaseConfigured || !supabase) {
+      return NextResponse.json(
+        { error: 'Cloud storage not configured. Please add Supabase environment variables.' },
+        { status: 503 }
+      )
+    }
+
     const { name, image, category } = await request.json()
 
     if (!name || !image) {
@@ -87,6 +101,14 @@ export async function POST(request: NextRequest) {
 // DELETE: Remove a custom outfit
 export async function DELETE(request: NextRequest) {
   try {
+    // Return error if Supabase is not configured
+    if (!isSupabaseConfigured || !supabase) {
+      return NextResponse.json(
+        { error: 'Cloud storage not configured. Please add Supabase environment variables.' },
+        { status: 503 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 
