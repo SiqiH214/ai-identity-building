@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         prompt: `${rewrittenPrompt}, professional photography, high quality, photorealistic, cinematic lighting`,
         image: referenceImages, // Array of base64 data URLs
         response_format: 'b64_json', // Get base64 response
-        size: '1440x2560', // Portrait size
+        size: '810x1080', // 1080p with 3:4 aspect ratio (portrait)
         watermark: false,
       }
 
