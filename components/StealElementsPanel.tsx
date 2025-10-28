@@ -134,20 +134,29 @@ export default function StealElementsPanel({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-2xl z-[10000]"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xl z-[10000]"
           />
 
-          {/* Modal Panel */}
+          {/* Modal Panel - Apple Genmoji style */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed top-0 left-0 right-0 flex justify-center z-[10001] p-4 pt-8"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="fixed inset-x-0 bottom-0 z-[10001]"
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="glass-card rounded-3xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto"
+              className="bg-[#1a1a1a]/95 backdrop-blur-2xl rounded-t-[40px] p-6 w-full h-[85vh] overflow-y-auto shadow-2xl border-t border-white/10"
+              style={{
+                maxHeight: 'calc(100vh - 60px)',
+              }}
             >
+              {/* Drag handle */}
+              <div className="flex justify-center mb-4">
+                <div className="w-10 h-1 bg-white/30 rounded-full" />
+              </div>
+
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
