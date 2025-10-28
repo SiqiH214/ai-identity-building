@@ -26,6 +26,7 @@ interface CreationSectionProps {
   lastPrompt?: string
   identityImage?: string | null
   identityName?: string
+  currentIdentity?: string | null
   onIdentityClick?: () => void
   selectedElements?: SelectedElement[]
   onElementsChange?: (elements: SelectedElement[]) => void
@@ -49,6 +50,7 @@ export default function CreationSection({
   lastPrompt = '',
   identityImage = null,
   identityName = 'Identity',
+  currentIdentity = null,
   onIdentityClick,
   selectedElements = [],
   onElementsChange,

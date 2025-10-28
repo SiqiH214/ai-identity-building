@@ -297,6 +297,7 @@ export default function Home() {
             onElementsChange={setSelectedElements}
             identityImage={identityImage}
             identityName={identityName}
+            currentIdentity={currentIdentity}
             onIdentityChange={setCurrentIdentity}
             onImageChange={setIdentityImage}
             onIdentityNameChange={setIdentityName}
