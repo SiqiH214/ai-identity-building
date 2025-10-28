@@ -203,7 +203,7 @@ export default function CreationSection({
       const base64 = reader.result as string
 
       // Prompt user for identity name
-      const name = prompt('Name this identity:', 'My Identity')
+      const name = window.prompt('Name this identity:', 'My Identity')
       if (!name) return
 
       const newId = `identity-${Date.now()}`
