@@ -172,7 +172,7 @@ export default function IdentitySection({
         animate={{ opacity: 1, scale: 1 }}
         className="relative w-full aspect-[3/4] rounded-[3rem] overflow-visible"
         style={{
-          background: 'linear-gradient(135deg, #3d2a54 0%, #4a1d6e 50%, #5b21b6 100%)',
+          background: 'linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 50%, #2d2d2d 100%)',
         }}
       >
         {isGenerating ? (
