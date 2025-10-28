@@ -131,18 +131,20 @@ export default function Home() {
 
     if (outfitElement && outfitElement.data && 'image' in outfitElement.data) {
       const outfitPath = outfitElement.data.image
-      try {
-        // Fetch the local outfit image and convert to base64
-        const response = await fetch(outfitPath)
-        const blob = await response.blob()
-        outfitImageBase64 = await new Promise<string>((resolve) => {
-          const reader = new FileReader()
-          reader.onloadend = () => resolve(reader.result as string)
-          reader.readAsDataURL(blob)
-        })
-        console.log('👔 Outfit image loaded:', outfitElement.data.name)
-      } catch (error) {
-        console.error('❌ Failed to load outfit image:', error)
+      if (outfitPath) {
+        try {
+          // Fetch the local outfit image and convert to base64
+          const response = await fetch(outfitPath)
+          const blob = await response.blob()
+          outfitImageBase64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.readAsDataURL(blob)
+          })
+          console.log('👔 Outfit image loaded:', outfitElement.data.name)
+        } catch (error) {
+          console.error('❌ Failed to load outfit image:', error)
+        }
       }
     }
 
@@ -152,17 +154,19 @@ export default function Home() {
 
     if (poseElement && poseElement.data && 'image' in poseElement.data) {
       const posePath = poseElement.data.image
-      try {
-        const response = await fetch(posePath)
-        const blob = await response.blob()
-        poseImageBase64 = await new Promise<string>((resolve) => {
-          const reader = new FileReader()
-          reader.onloadend = () => resolve(reader.result as string)
-          reader.readAsDataURL(blob)
-        })
-        console.log('🧘 Pose image loaded:', poseElement.data.name)
-      } catch (error) {
-        console.error('❌ Failed to load pose image:', error)
+      if (posePath) {
+        try {
+          const response = await fetch(posePath)
+          const blob = await response.blob()
+          poseImageBase64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.readAsDataURL(blob)
+          })
+          console.log('🧘 Pose image loaded:', poseElement.data.name)
+        } catch (error) {
+          console.error('❌ Failed to load pose image:', error)
+        }
       }
     }
 
@@ -172,17 +176,19 @@ export default function Home() {
 
     if (locationElement && locationElement.data && 'image' in locationElement.data) {
       const locationPath = locationElement.data.image
-      try {
-        const response = await fetch(locationPath)
-        const blob = await response.blob()
-        locationImageBase64 = await new Promise<string>((resolve) => {
-          const reader = new FileReader()
-          reader.onloadend = () => resolve(reader.result as string)
-          reader.readAsDataURL(blob)
-        })
-        console.log('📍 Location image loaded:', locationElement.data.name)
-      } catch (error) {
-        console.error('❌ Failed to load location image:', error)
+      if (locationPath) {
+        try {
+          const response = await fetch(locationPath)
+          const blob = await response.blob()
+          locationImageBase64 = await new Promise<string>((resolve) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.readAsDataURL(blob)
+          })
+          console.log('📍 Location image loaded:', locationElement.data.name)
+        } catch (error) {
+          console.error('❌ Failed to load location image:', error)
+        }
       }
     }
 
