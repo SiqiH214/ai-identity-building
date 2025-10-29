@@ -7,6 +7,38 @@ export const CITIES = ['San Francisco', 'Los Angeles', 'Home'] as const
 export type City = typeof CITIES[number]
 
 export const LOCATIONS = [
+  // Home - Indoor locations (prioritized first)
+  {
+    name: 'Bedroom',
+    image: '/locations/home/bedroom.jpg',
+    city: 'Home',
+  },
+  {
+    name: 'Living Room',
+    image: '/locations/home/living-room.jpg',
+    city: 'Home',
+  },
+  {
+    name: 'Bathroom',
+    image: '/locations/home/bathroom.jpg',
+    city: 'Home',
+  },
+  {
+    name: 'Kitchen',
+    image: '/locations/home/kitchen.jpg',
+    city: 'Home',
+  },
+  {
+    name: 'Balcony',
+    image: '/locations/home/balcony.jpg',
+    city: 'Home',
+  },
+  {
+    name: 'Dining Room',
+    image: '/locations/home/dining-room.jpg',
+    city: 'Home',
+  },
+
   // San Francisco - 10 famous locations
   {
     name: 'Golden Gate Bridge',
@@ -109,38 +141,6 @@ export const LOCATIONS = [
     name: 'Beverly Hills',
     image: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
-  },
-
-  // Home - Indoor locations (user will provide images)
-  {
-    name: 'Bedroom',
-    image: '/locations/home/bedroom.jpg',
-    city: 'Home',
-  },
-  {
-    name: 'Living Room',
-    image: '/locations/home/living-room.jpg',
-    city: 'Home',
-  },
-  {
-    name: 'Bathroom',
-    image: '/locations/home/bathroom.jpg',
-    city: 'Home',
-  },
-  {
-    name: 'Kitchen',
-    image: '/locations/home/kitchen.jpg',
-    city: 'Home',
-  },
-  {
-    name: 'Balcony',
-    image: '/locations/home/balcony.jpg',
-    city: 'Home',
-  },
-  {
-    name: 'Dining Room',
-    image: '/locations/home/dining-room.jpg',
-    city: 'Home',
   },
 
   // Other cities (kept for backward compatibility)

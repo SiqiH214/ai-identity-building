@@ -151,21 +151,6 @@ export default function IdentitySection({
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      {/* City dropdown menu at the top left */}
-      <div className="absolute top-4 left-4 z-30">
-        <select
-          value={selectedCity}
-          onChange={(e) => onCityChange?.(e.target.value as City)}
-          className="px-3 py-1 rounded-full text-xs font-medium bg-gray-200/50 text-gray-900 backdrop-blur-md border border-gray-300 hover:bg-white/20 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30"
-        >
-          {CITIES.map((city) => (
-            <option key={city} value={city} className="bg-white text-gray-900">
-              {city}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Central large image area - Genmoji style */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}

@@ -621,9 +621,8 @@ export default function CreationSection({
   const renderCategoryContent = () => {
     switch (selectedCategory) {
       case 'location': {
-        // Filter locations by selected city
-        const filteredLocations = LOCATIONS.filter(loc => loc.city === selectedCity)
-        const allLocations = [...customLocations.filter(loc => loc.city === selectedCity), ...filteredLocations]
+        // Show ALL locations in one scrollable row (Home category is already first in LOCATIONS array)
+        const allLocations = [...customLocations, ...LOCATIONS]
 
         return (
           <div className="flex gap-3">
@@ -646,17 +645,15 @@ export default function CreationSection({
                 <p className="text-[10px] text-gray-600 text-center w-20 line-clamp-1">{location.name}</p>
               </div>
             ))}
-            {selectedCity !== 'Home' && (
-              <div className="flex flex-col items-center gap-1">
-                <button
-                  onClick={() => setShowLocationPanel(true)}
-                  className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-gray-400 hover:border-white/50 bg-gray-100 flex items-center justify-center transition-all"
-                >
-                  <Upload className="w-6 h-6 text-gray-500" />
-                </button>
-                <p className="text-[10px] text-gray-600 text-center w-20">More</p>
-              </div>
-            )}
+            <div className="flex flex-col items-center gap-1">
+              <button
+                onClick={() => setShowLocationPanel(true)}
+                className="flex-shrink-0 w-16 h-16 rounded-full border-2 border-dashed border-gray-400 hover:border-blue-400 bg-gray-50 flex items-center justify-center transition-all"
+              >
+                <Upload className="w-6 h-6 text-gray-500" />
+              </button>
+              <p className="text-[10px] text-gray-600 text-center w-20">More</p>
+            </div>
           </div>
         )
       }
