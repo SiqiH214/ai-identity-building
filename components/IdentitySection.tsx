@@ -183,7 +183,7 @@ export default function IdentitySection({
               />
             </motion.div>
 
-            {/* Rotating bubbles around the main identity */}
+            {/* Element bubbles - keep same position during generation */}
             {selectedElements.filter(element => {
               // Filter out the user's own identity from bubbles
               if (element.type === 'avatar' || element.type === 'identity') {
@@ -194,16 +194,16 @@ export default function IdentitySection({
               }
               return true
             }).map((element, i) => {
-              const angle = (i * 360) / selectedElements.filter(element => {
-                if (element.type === 'avatar' || element.type === 'identity') {
-                  if (element.data && 'username' in element.data) {
-                    const username = element.data.username.replace('@', '').toLowerCase()
-                    return username !== identityName.toLowerCase()
-                  }
-                }
-                return true
-              }).length
-              const radius = 140
+              // Use same positions as pre-generation state
+              const positions = [
+                { x: -100, y: -50 },
+                { x: 100, y: -50 },
+                { x: -90, y: 60 },
+                { x: 90, y: 60 },
+                { x: -60, y: -90 },
+                { x: 60, y: -90 },
+              ]
+              const pos = positions[i % positions.length]
 
               return (
                 <motion.div
@@ -212,24 +212,20 @@ export default function IdentitySection({
                   style={{
                     width: 70,
                     height: 70,
+                    left: `calc(50% + ${pos.x}px - 35px)`,
+                    top: `calc(50% + ${pos.y}px - 35px)`,
                     filter: 'blur(2px)',
                     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1)',
                   }}
                   animate={{
-                    x: [
-                      Math.cos((angle * Math.PI) / 180) * radius,
-                      Math.cos(((angle + 360) * Math.PI) / 180) * radius,
-                    ],
-                    y: [
-                      Math.sin((angle * Math.PI) / 180) * radius,
-                      Math.sin(((angle + 360) * Math.PI) / 180) * radius,
-                    ],
+                    y: [0, -10, 0, 10, 0],
+                    x: [0, 5, 0, -5, 0],
                     opacity: [0.6, 0.9, 0.6],
                   }}
                   transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "linear",
+                    y: { duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
+                    x: { duration: 4.5 + i * 0.5, repeat: Infinity, ease: "easeInOut" },
+                    opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
                   }}
                 >
                   {element.type === 'avatar' && element.data && 'image' in element.data ? (
@@ -340,20 +336,52 @@ export default function IdentitySection({
               />
             </motion.div>
 
-            {/* Loading text overlay - centered on the canvas */}
+            {/* Loading text overlay - positioned where the green message bubble was */}
             <motion.div
-              animate={{
-                opacity: [0.7, 1, 0.7],
-              }}
+              initial={{ opacity: 0, y: -20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeInOut"
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
               }}
-              className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
+              className="absolute top-8 left-1/2 -translate-x-1/2 z-20 max-w-[280px]"
             >
-              <p className="text-lg font-semibold text-gray-900 mb-1">Generating images...</p>
-              <p className="text-sm text-gray-600">This may take a moment</p>
+              {/* Loading bubble replacing the green message bubble */}
+              <div className="relative">
+                <motion.div
+                  animate={{
+                    opacity: [0.9, 1, 0.9],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="relative rounded-[24px] px-5 py-4"
+                  style={{
+                    background: 'linear-gradient(135deg, #e8fcc2 0%, #d4fc79 100%)',
+                    boxShadow: '0 8px 24px rgba(212, 252, 121, 0.3)',
+                  }}
+                >
+                  <p className="relative text-[#3d2a54] text-sm leading-relaxed font-semibold text-center">
+                    Generating images...
+                  </p>
+                  <p className="relative text-[#3d2a54] text-xs mt-1 text-center opacity-80">
+                    This may take a moment
+                  </p>
+                </motion.div>
+
+                {/* Message bubble tail pointing down */}
+                <div
+                  className="absolute -bottom-2 left-12 w-6 h-6"
+                  style={{
+                    background: 'linear-gradient(135deg, #e8fcc2 0%, #d4fc79 100%)',
+                    clipPath: 'polygon(0% 0%, 100% 0%, 0% 100%)',
+                    transform: 'rotate(-15deg)',
+                  }}
+                />
+              </div>
             </motion.div>
           </div>
         ) : identityImage ? (
