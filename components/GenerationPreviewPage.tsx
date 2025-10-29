@@ -78,15 +78,15 @@ export default function GenerationPreviewPage({
       </div>
 
       {/* Main Image Area */}
-      <div className="flex-1 flex items-center justify-center p-6 relative">
-        {/* Full screen image display */}
-        <div className="relative w-full h-full max-w-2xl">
+      <div className="flex-1 flex items-center justify-center px-6 relative">
+        {/* Image container with 3:4 aspect ratio to match pre-gen page */}
+        <div className="relative w-full aspect-[3/4] max-w-md">
           <AnimatePresence mode="wait">
             <motion.img
               key={currentIndex}
               src={images[currentIndex]}
               alt={`Generated ${currentIndex + 1}`}
-              className="w-full h-full object-contain rounded-3xl"
+              className="w-full h-full object-cover rounded-[3rem] border-2 border-gray-200 shadow-lg"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
