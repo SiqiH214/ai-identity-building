@@ -10,104 +10,104 @@ export const LOCATIONS = [
   // San Francisco - 10 famous locations
   {
     name: 'Golden Gate Bridge',
-    image: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Fishermans Wharf',
-    image: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Alcatraz Island',
-    image: 'https://images.unsplash.com/photo-1611068813580-c0c447f1d6cb?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Lombard Street',
-    image: 'https://images.unsplash.com/photo-1534050359320-02900022671e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Union Square',
-    image: 'https://images.unsplash.com/photo-1506146332389-18140dc7b2fb?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Painted Ladies',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Coit Tower',
-    image: 'https://images.unsplash.com/photo-1521464302861-ce943915d1c3?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Ferry Building',
-    image: 'https://images.unsplash.com/photo-1510540032223-e3f8c9e69d4b?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Palace of Fine Arts',
-    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
   {
     name: 'Chinatown SF',
-    image: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=400&auto=format&fit=crop',
     city: 'San Francisco',
   },
 
   // Los Angeles - 10 famous locations
   {
     name: 'Hollywood Boulevard',
-    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Venice Beach',
-    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Santa Monica Pier',
-    image: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Griffith Observatory',
-    image: 'https://images.unsplash.com/photo-1609897925380-a163b317f133?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1609897925380-a163b317f133?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Hollywood Sign',
-    image: 'https://images.unsplash.com/photo-1598524722892-4b9b2d8a2b1d?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1598524722892-4b9b2d8a2b1d?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Rodeo Drive',
-    image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'The Getty Center',
-    image: 'https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1580674285054-bed31e145f59?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Downtown LA',
-    image: 'https://images.unsplash.com/photo-1534190239940-9ba8944ea261?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1534190239940-9ba8944ea261?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Malibu Beach',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
   {
     name: 'Beverly Hills',
-    image: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&auto=format&fit=crop',
     city: 'Los Angeles',
   },
 
