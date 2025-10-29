@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import IdentitySection from '@/components/IdentitySection'
 import CreationSection from '@/components/CreationSection'
 import ResultsSection from '@/components/ResultsSection'
+import GenerationPreviewPage from '@/components/GenerationPreviewPage'
 import { generateImages, generateImagesByteplus } from '@/lib/api'
 import type { Avatar } from '@/lib/avatars'
 import type { City } from '@/lib/constants'
@@ -27,6 +28,7 @@ export default function Home() {
   const [useByteplus, setUseByteplus] = useState(false) // Toggle for testing BytePlus
   const [selectedCity, setSelectedCity] = useState<City>('Los Angeles')
   const [prompt, setPrompt] = useState<string>('') // Lift prompt state to page level
+  const [showPreviewPage, setShowPreviewPage] = useState(false) // Show preview page after generation
   const resetTimerRef = useRef<(() => void) | null>(null) // Store reference to timer reset function
 
   const handleRevert = () => {
@@ -210,6 +212,7 @@ export default function Home() {
       if (result.images && result.images.length > 0) {
         setGeneratedImages(result.images)
         setHasGenerated(true)
+        setShowPreviewPage(true) // Show preview page after generation
         console.log('✅ Generation successful:', result.note || 'Completed')
       } else {
         throw new Error(result.error || 'Unknown error')
@@ -242,6 +245,27 @@ export default function Home() {
     } finally {
       setIsGenerating(false)
     }
+  }
+
+  // Show preview page if generation is complete
+  if (showPreviewPage && generatedImages.length > 0) {
+    return (
+      <GenerationPreviewPage
+        images={generatedImages}
+        onBack={() => setShowPreviewPage(false)}
+        onPostImage={() => {
+          // TODO: Implement post image functionality
+          alert('Post image feature coming soon!')
+        }}
+        onAnimate={() => {
+          // TODO: Implement animate functionality
+          alert('Animate feature coming soon!')
+        }}
+        prompt={lastPrompt}
+        identityImage={identityImage}
+        identityName={identityName}
+      />
+    )
   }
 
   return (
