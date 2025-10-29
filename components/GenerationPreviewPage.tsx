@@ -7,6 +7,8 @@ import {
   MoreHorizontal,
   Trash2,
   ChevronRight,
+  Volume2,
+  Type,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -183,6 +185,25 @@ export default function GenerationPreviewPage({
               </svg>
             </button>
           </div>
+        </div>
+
+        {/* Add Sound and Add Caption Buttons */}
+        <div className="px-6 py-3 flex gap-3">
+          <button
+            onClick={() => alert('Add sound feature coming soon!')}
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-white/80 hover:bg-white border border-gray-200 transition-all active:scale-95"
+          >
+            <Volume2 className="w-5 h-5 text-gray-700" />
+            <span className="text-gray-900 font-medium">Add sound</span>
+          </button>
+
+          <button
+            onClick={() => alert('Add caption feature coming soon!')}
+            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-full bg-white/80 hover:bg-white border border-gray-200 transition-all active:scale-95"
+          >
+            <Type className="w-5 h-5 text-gray-700" />
+            <span className="text-gray-900 font-medium">Add caption</span>
+          </button>
         </div>
 
         {/* Bottom Action Buttons */}
