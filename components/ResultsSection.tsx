@@ -53,7 +53,7 @@ export default function ResultsSection({
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative w-full aspect-[3/4] rounded-[3rem] overflow-hidden"
+        className="relative w-full aspect-[3/4] rounded-[3rem] overflow-hidden border-2 border-gray-200 shadow-lg"
         style={{
           background: 'linear-gradient(135deg, #f5f5f7 0%, #ffffff 50%, #fafafa 100%)',
         }}
