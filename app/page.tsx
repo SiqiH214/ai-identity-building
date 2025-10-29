@@ -25,7 +25,7 @@ export default function Home() {
   const [hasGenerated, setHasGenerated] = useState(false)
   const [lastPrompt, setLastPrompt] = useState<string>('')
   const [selectedElements, setSelectedElements] = useState<SelectedElement[]>([])
-  const [useByteplus, setUseByteplus] = useState(false) // Toggle for testing BytePlus
+  const [useByteplus, setUseByteplus] = useState(true) // BytePlus Seedream is now the default model
   const [selectedCity, setSelectedCity] = useState<City>('Los Angeles')
   const [prompt, setPrompt] = useState<string>('') // Lift prompt state to page level
   const [showPreviewPage, setShowPreviewPage] = useState(false) // Show preview page after generation

@@ -107,16 +107,26 @@ export async function POST(request: NextRequest) {
     console.log('🖼️  Generating 4 variations in parallel with BytePlus...')
 
     const generateVariation = async (variationNum: number) => {
+      // Define different camera angles for carousel-style variations
+      const cameraAngles = [
+        'front view, eye level, centered composition',  // Variation 1: Classic straight-on
+        'slight side angle, 3/4 view, dynamic composition',  // Variation 2: Profile-ish
+        'low angle shot looking up, powerful perspective',  // Variation 3: From below
+        'slightly elevated angle, editorial style',  // Variation 4: From above
+      ]
+
+      const cameraAngle = cameraAngles[variationNum - 1]
+
       const requestBody = {
         model: byteplusModel,
-        prompt: `${rewrittenPrompt}, professional photography, high quality, photorealistic, cinematic lighting`,
+        prompt: `${rewrittenPrompt}, ${cameraAngle}, professional photography, high quality, photorealistic, cinematic lighting`,
         image: referenceImages, // Array of base64 data URLs
         response_format: 'b64_json', // Get base64 response
         size: '864x1152', // 3:4 aspect ratio (portrait), meets 921600px minimum
         watermark: false,
       }
 
-      console.log(`🎨 Generating variation ${variationNum}/4...`)
+      console.log(`🎨 Generating variation ${variationNum}/4... (${cameraAngle})`)
 
       const imageResponse = await fetch(`${byteplusBaseUrl}/images/generations`, {
         method: 'POST',
